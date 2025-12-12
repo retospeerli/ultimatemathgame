@@ -2,469 +2,1200 @@
 <html lang="de">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Umlaut-Meister Wettkampf - Mehrzahlbildung</title>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <link rel="stylesheet" href="style.css">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ultimate Math Game - Mathematik Lernspiel</title>
     <style>
-        /* Responsive Base Styles */
         * {
             margin: 0;
             padding: 0;
             box-sizing: border-box;
-            -webkit-tap-highlight-color: transparent;
-            -webkit-text-size-adjust: 100%;
-        }
-        
-        html {
-            font-size: 16px;
+            font-family: 'Arial', sans-serif;
         }
         
         body {
-            background: linear-gradient(135deg, #ff6b6b 0%, #ffd166 100%);
+            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+            color: #fff;
             min-height: 100vh;
-            min-height: -webkit-fill-available;
             display: flex;
-            justify-content: center;
+            flex-direction: column;
             align-items: center;
-            padding: 10px;
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen-Sans, Ubuntu, Cantarell, sans-serif;
-            overflow-x: hidden;
-            touch-action: manipulation;
-        }
-        
-        /* Loading Screen */
-        .loading {
-            text-align: center;
-            color: white;
-            font-size: clamp(18px, 5vw, 24px);
             padding: 20px;
         }
         
-        .loading i {
+        .container {
+            max-width: 800px;
+            width: 100%;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+        
+        header {
+            text-align: center;
+            margin-bottom: 30px;
+            width: 100%;
+        }
+        
+        h1 {
+            font-size: 2.8rem;
+            margin-bottom: 10px;
+            background: linear-gradient(to right, #4cc9f0, #4361ee);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            text-shadow: 0 0 10px rgba(76, 201, 240, 0.3);
+        }
+        
+        .subtitle {
+            font-size: 1.2rem;
+            color: #a5b4fc;
+            margin-bottom: 20px;
+        }
+        
+        .screen {
+            background-color: rgba(0, 0, 30, 0.7);
+            border-radius: 15px;
+            padding: 25px;
+            width: 100%;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+            border: 1px solid #4cc9f0;
+            margin-bottom: 20px;
+            display: none;
+        }
+        
+        .screen.active {
             display: block;
-            font-size: clamp(36px, 10vw, 48px);
-            margin-bottom: 15px;
-            animation: spin 2s linear infinite;
         }
         
-        @keyframes spin {
-            0% { transform: rotate(0deg); }
-            100% { transform: rotate(360deg); }
+        .screen-title {
+            font-size: 1.8rem;
+            margin-bottom: 20px;
+            color: #4cc9f0;
+            text-align: center;
         }
         
-        /* Hide scrollbar for touch devices */
-        @media (max-width: 768px) {
-            body::-webkit-scrollbar {
-                display: none;
+        .button-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 15px;
+            margin-top: 20px;
+        }
+        
+        button {
+            background: linear-gradient(to bottom, #4361ee, #3a0ca3);
+            color: white;
+            border: none;
+            padding: 15px;
+            border-radius: 10px;
+            font-size: 1.2rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+        }
+        
+        button:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.3);
+            background: linear-gradient(to bottom, #4cc9f0, #4361ee);
+        }
+        
+        button:active {
+            transform: translateY(1px);
+        }
+        
+        .option-button {
+            font-size: 1.1rem;
+            padding: 12px;
+        }
+        
+        .game-info {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 20px;
+            font-size: 1.2rem;
+            background-color: rgba(0, 20, 40, 0.6);
+            padding: 10px 15px;
+            border-radius: 10px;
+        }
+        
+        .game-stats span {
+            margin-right: 15px;
+        }
+        
+        .timer {
+            font-size: 1.5rem;
+            font-weight: bold;
+            color: #f72585;
+        }
+        
+        .question-container {
+            background-color: rgba(0, 30, 60, 0.8);
+            padding: 25px;
+            border-radius: 10px;
+            text-align: center;
+            margin-bottom: 25px;
+            border: 2px solid #4361ee;
+        }
+        
+        .question {
+            font-size: 2.5rem;
+            margin-bottom: 20px;
+            color: #fff;
+        }
+        
+        .answer-buttons {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 15px;
+            margin-top: 20px;
+        }
+        
+        .answer-button {
+            font-size: 1.8rem;
+            padding: 20px;
+            height: 80px;
+        }
+        
+        .answer-button.correct {
+            background: linear-gradient(to bottom, #06d6a0, #04966a);
+        }
+        
+        .answer-button.wrong {
+            background: linear-gradient(to bottom, #ef476f, #d90429);
+        }
+        
+        .result-message {
+            font-size: 1.5rem;
+            text-align: center;
+            margin-top: 20px;
+            padding: 15px;
+            border-radius: 10px;
+            display: none;
+        }
+        
+        .correct-message {
+            background-color: rgba(6, 214, 160, 0.2);
+            color: #06d6a0;
+            border: 1px solid #06d6a0;
+        }
+        
+        .wrong-message {
+            background-color: rgba(239, 71, 111, 0.2);
+            color: #ef476f;
+            border: 1px solid #ef476f;
+        }
+        
+        .score-display {
+            display: flex;
+            justify-content: center;
+            margin: 20px 0;
+        }
+        
+        .score-circle {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background-color: #1a1a2e;
+            border: 2px solid #4361ee;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 3px;
+            font-size: 1rem;
+            font-weight: bold;
+        }
+        
+        .score-circle.won {
+            background-color: #06d6a0;
+            color: #000;
+        }
+        
+        .score-circle.lost {
+            background-color: #ef476f;
+            color: #fff;
+        }
+        
+        .score-circle.active {
+            border-width: 3px;
+            border-color: #4cc9f0;
+        }
+        
+        .wrestler-display {
+            width: 300px;
+            height: 200px;
+            margin: 0 auto 20px;
+            background-size: contain;
+            background-repeat: no-repeat;
+            background-position: center;
+            transition: background-image 0.3s ease;
+        }
+        
+        .game-over {
+            text-align: center;
+        }
+        
+        .final-result {
+            font-size: 2.5rem;
+            margin: 20px 0;
+            padding: 20px;
+            border-radius: 15px;
+        }
+        
+        .win {
+            background: linear-gradient(to right, #06d6a0, #04966a);
+            color: #000;
+        }
+        
+        .lose {
+            background: linear-gradient(to right, #ef476f, #d90429);
+            color: #fff;
+        }
+        
+        .training-info {
+            font-size: 1.2rem;
+            text-align: center;
+            margin-bottom: 20px;
+            color: #a5b4fc;
+        }
+        
+        .progress-bar {
+            width: 100%;
+            height: 20px;
+            background-color: #1a1a2e;
+            border-radius: 10px;
+            overflow: hidden;
+            margin-bottom: 20px;
+            border: 1px solid #4361ee;
+        }
+        
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(to right, #4cc9f0, #4361ee);
+            width: 0%;
+            transition: width 0.5s ease;
+        }
+        
+        footer {
+            margin-top: 20px;
+            color: #a5b4fc;
+            text-align: center;
+            font-size: 0.9rem;
+        }
+        
+        @media (max-width: 600px) {
+            .button-grid, .answer-buttons {
+                grid-template-columns: 1fr;
             }
             
-            body {
-                -ms-overflow-style: none;
-                scrollbar-width: none;
+            .question {
+                font-size: 2rem;
             }
-        }
-        
-        /* Prevent zoom on input focus for mobile */
-        @media screen and (max-width: 768px) {
-            input, select, textarea {
-                font-size: 16px !important;
+            
+            .answer-button {
+                font-size: 1.5rem;
+                padding: 15px;
+                height: 70px;
             }
-        }
-        
-        /* High DPI screens optimization */
-        @media (-webkit-min-device-pixel-ratio: 2), (min-resolution: 192dpi) {
-            .container {
-                border-width: 2px;
+            
+            h1 {
+                font-size: 2.2rem;
             }
-        }
-        
-        /* Print styles */
-        @media print {
-            .game-area, .control-buttons, .modal-overlay {
-                display: none !important;
+            
+            .wrestler-display {
+                width: 250px;
+                height: 150px;
             }
         }
     </style>
 </head>
 <body>
-    <!-- Loading Screen -->
-    <div id="loading-screen" class="loading">
-        <i class="fas fa-trophy"></i>
-        <p>Lade Umlaut-Meister Wettkampf...</p>
-    </div>
-    
-    <!-- Main Game Container -->
-    <div id="game-container" style="display: none;">
-        <div class="container">
-            <!-- Header mit Wettkampf-Design -->
-            <header class="header">
-                <div class="logo-section">
-                    <div class="logo">
-                        <i class="fas fa-crown"></i>
-                        <span class="logo-text">Umlaut-Meister WETTKAMPF</span>
-                    </div>
-                    <div class="level-indicator">
-                        <i class="fas fa-bolt"></i>
-                        <span class="level-text">Challenge: 50 Wörter</span>
-                    </div>
-                </div>
-                
+    <div class="container">
+        <header>
+            <h1>Ultimate Math Game</h1>
+            <div class="subtitle">Mathematik Lernspiel - Teste deine Rechenfähigkeiten!</div>
+        </header>
+        
+        <!-- Start Screen -->
+        <div id="start-screen" class="screen active">
+            <h2 class="screen-title">Wähle eine Klassenstufe</h2>
+            <div class="button-grid">
+                <button id="grade1" class="option-button">1. Klasse<br>Addition/Subtraktion bis 20</button>
+                <button id="grade2" class="option-button">2. Klasse<br>Addition/Subtraktion bis 100</button>
+                <button id="grade3" class="option-button">3. Klasse<br>Addition/Subtraktion bis 1000<br>Einmaleins & Division</button>
+                <button id="grade4" class="option-button">4. Klasse<br>Addition/Subtraktion bis 10.000<br>Einmaleins bis 20</button>
+            </div>
+        </div>
+        
+        <!-- Time Selection Screen -->
+        <div id="time-screen" class="screen">
+            <h2 class="screen-title">Wähle einen Zeitmodus</h2>
+            <div class="button-grid">
+                <button id="time-hard" class="option-button">Schwierig<br>5 Sekunden pro Frage</button>
+                <button id="time-medium" class="option-button">Mittel<br>8 Sekunden pro Frage</button>
+                <button id="time-easy" class="option-button">Einfach<br>15 Sekunden pro Frage</button>
+                <button id="training-mode" class="option-button">Trainingsmodus<br>30 Fragen ohne Timer</button>
+            </div>
+            <button id="back-to-grades" style="margin-top: 20px; width: 100%;">Zurück zur Klassenauswahl</button>
+        </div>
+        
+        <!-- Game Screen -->
+        <div id="game-screen" class="screen">
+            <div class="wrestler-display" id="wrestler-display"></div>
+            
+            <div class="score-display" id="score-display">
+                <!-- Score circles will be generated here -->
+            </div>
+            
+            <div class="game-info">
                 <div class="game-stats">
-                    <div class="stat-item">
-                        <span class="stat-label">Punkte</span>
-                        <span class="stat-value" id="score">0</span>
-                    </div>
-                    <div class="stat-item">
-                        <span class="stat-label">Serie</span>
-                        <span class="stat-value" id="streak-counter">0</span>
-                    </div>
-                    <div class="stat-item">
-                        <span class="stat-label">Wörter</span>
-                        <span class="stat-value" id="correct-counter">0/50</span>
-                    </div>
+                    <span>Frage: <span id="question-number">1</span>/<span id="total-questions">7</span></span>
+                    <span>Richtig: <span id="correct-count">0</span></span>
+                    <span>Falsch: <span id="wrong-count">0</span></span>
                 </div>
-            </header>
-
-            <!-- Lebenspunkte und Wettkampf-Bar -->
-            <div class="competition-container">
-                <div class="lives-section">
-                    <div class="lives-title">
-                        <i class="fas fa-heart"></i>
-                        <span>Lebenspunkte</span>
-                    </div>
-                    <div class="hearts" id="hearts">
-                        <i class="fas fa-heart live"></i>
-                        <i class="fas fa-heart live"></i>
-                        <i class="fas fa-heart live"></i>
-                    </div>
-                </div>
-                
-                <div class="streak-bonus-section">
-                    <div class="streak-bonus" id="streak-bonus">
-                        <i class="fas fa-bolt"></i>
-                        <span class="streak-text">+1 Leben bei 5er Serie!</span>
-                    </div>
-                </div>
+                <div class="timer" id="timer-display">15</div>
             </div>
-
-            <!-- Progress Bar -->
-            <div class="progress-container">
-                <div class="progress-title">
-                    <i class="fas fa-flag-checkered"></i>
-                    <span>Wettkampf-Fortschritt</span>
-                </div>
-                <div class="word-counter">
-                    <div class="progress-bar">
-                        <div class="progress-fill" id="progress-fill"></div>
-                    </div>
-                    <div class="progress-text">
-                        <span id="progress-text">0/50 Wörter - Wettkampf läuft!</span>
-                    </div>
-                </div>
+            
+            <div class="training-info" id="training-info"></div>
+            <div class="progress-bar" id="progress-bar">
+                <div class="progress-fill" id="progress-fill"></div>
             </div>
-
-            <!-- Main Game Area -->
-            <main class="game-area">
-                <!-- Word Display -->
-                <div class="word-display-container">
-                    <div class="word-prompt">
-                        <i class="fas fa-fire"></i>
-                        <span>WETTKAMPF: Wähle die richtige Mehrzahl!</span>
-                    </div>
-                    <div class="singular-word" id="singular-word">
-                        <span id="word-singular">BEREIT?</span>
-                        <div class="word-hint">Einzahl - Achtung auf Umlaute!</div>
-                    </div>
-                    <div class="device-warning" id="device-warning">
-                        <i class="fas fa-mobile-alt"></i>
-                        <span>Tippe auf die richtige Antwort</span>
-                    </div>
-                </div>
-
-                <!-- Answer Buttons -->
+            
+            <div class="question-container">
+                <div class="question" id="question">5 + 7 = ?</div>
                 <div class="answer-buttons" id="answer-buttons">
-                    <!-- Buttons werden durch JavaScript erzeugt -->
+                    <!-- Answer buttons will be generated here -->
                 </div>
-
-                <!-- Feedback Area -->
-                <div class="feedback-area">
-                    <div class="feedback-message" id="feedback-message">
-                        Klicke auf "Wettkampf starten"!
-                    </div>
-                    <div class="feedback-details" id="feedback-details">
-                        Ziel: 50 richtige Mehrzahlformen - Jeder Fehler kostet ein Leben!
-                    </div>
-                </div>
-
-                <!-- Control Buttons -->
-                <div class="control-buttons">
-                    <button id="start-btn" class="control-btn start-btn">
-                        <i class="fas fa-play-circle"></i>
-                        <span class="btn-text">Wettkampf starten</span>
-                    </button>
-                    <button id="hint-btn" class="control-btn hint-btn" disabled>
-                        <i class="fas fa-lightbulb"></i>
-                        <span class="btn-text">Tipp (-5P)</span>
-                    </button>
-                    <button id="skip-btn" class="control-btn skip-btn" disabled>
-                        <i class="fas fa-forward"></i>
-                        <span class="btn-text">Überspringen (-10P)</span>
-                    </button>
-                </div>
-            </main>
-
-            <!-- Game Log -->
-            <div class="game-log" id="game-log">
-                <div class="game-log-header">
-                    <i class="fas fa-scroll"></i>
-                    <span>Wettkampf-Log</span>
-                </div>
-                <div class="game-log-content" id="game-log-content">
-                    Willkommen zum Umlaut-Meister WETTKAMPF! Ziel: 50 von 50!
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <!-- End Game Modal -->
-    <div class="modal-overlay" id="end-modal">
-        <div class="modal-content">
-            <div class="modal-header">
-                <i class="fas fa-trophy" id="modal-icon"></i>
-                <h2 id="modal-title">WETTKAMPF BEENDET!</h2>
             </div>
             
-            <div class="result-stats">
-                <div class="result-item">
-                    <span class="result-label">Finale Punktzahl:</span>
-                    <span class="result-value" id="final-score">0</span>
+            <div class="result-message" id="result-message"></div>
+        </div>
+        
+        <!-- Game Over Screen -->
+        <div id="game-over-screen" class="screen">
+            <div class="game-over">
+                <h2 class="screen-title">Spiel beendet!</h2>
+                <div class="wrestler-display" id="final-wrestler"></div>
+                <div class="final-result" id="final-result">Du hast gewonnen!</div>
+                <div style="margin: 20px 0;">
+                    <div>Richtige Antworten: <span id="final-correct">0</span></div>
+                    <div>Falsche Antworten: <span id="final-wrong">0</span></div>
+                    <div style="margin-top: 15px; font-size: 1.2rem;">Zeitmodus: <span id="final-mode">Einfach</span></div>
+                    <div style="font-size: 1.2rem;">Klassenstufe: <span id="final-grade">1. Klasse</span></div>
                 </div>
-                <div class="result-item">
-                    <span class="result-label">Richtige Antworten:</span>
-                    <span class="result-value" id="final-correct">0/50</span>
-                </div>
-                <div class="result-item">
-                    <span class="result-label">Falsche Antworten:</span>
-                    <span class="result-value" id="final-wrong">0</span>
-                </div>
-                <div class="result-item">
-                    <span class="result-label">Übersprungen:</span>
-                    <span class="result-value" id="final-skipped">0</span>
-                </div>
-                <div class="result-item">
-                    <span class="result-label">Beste Serie:</span>
-                    <span class="result-value" id="final-streak">0</span>
-                </div>
-                <div class="result-item">
-                    <span class="result-label">Verbleibende Leben:</span>
-                    <span class="result-value" id="final-lives">0</span>
-                </div>
-                <div class="result-item">
-                    <span class="result-label">Genauigkeit:</span>
-                    <span class="result-value" id="final-accuracy">0%</span>
-                </div>
-            </div>
-
-            <div class="achievement-badges" id="achievement-badges">
-                <h3><i class="fas fa-medal"></i> Errungenschaften:</h3>
-                <div id="badges-list">Wird berechnet...</div>
-            </div>
-
-            <div class="modal-buttons">
-                <button id="restart-btn" class="modal-btn restart-btn">
-                    <i class="fas fa-redo"></i>
-                    <span>Neuer Wettkampf</span>
-                </button>
-                <button id="share-btn" class="modal-btn share-btn">
-                    <i class="fas fa-share-alt"></i>
-                    <span>Ergebnis teilen</span>
-                </button>
-                <button id="close-btn" class="modal-btn close-btn">
-                    <i class="fas fa-times"></i>
-                    <span>Schließen</span>
-                </button>
+                <button id="play-again">Nochmal spielen</button>
+                <button id="back-to-start" style="margin-top: 15px;">Zurück zum Hauptmenü</button>
             </div>
         </div>
+        
+        <footer>
+            Ultimate Math Game - Mathematik Lernspiel für alle Klassenstufen
+        </footer>
     </div>
 
-    <!-- ==================== ALLE AUDIO EFFEKTE ==================== -->
-    <!-- Haupt-Audio (lokale Dateien) -->
-    <audio id="correct-sound" preload="auto">
-        <source src="audio/correct.wav" type="audio/wav">
-        <source src="audio/correct.mp3" type="audio/mpeg">
-    </audio>
-    <audio id="error-sound" preload="auto">
-        <source src="audio/error.wav" type="audio/wav">
-        <source src="audio/error.mp3" type="audio/mpeg">
-    </audio>
-    <audio id="roundlost-sound" preload="auto">
-        <source src="audio/roundlost.wav" type="audio/wav">
-        <source src="audio/roundlost.mp3" type="audio/mpeg">
-    </audio>
-    <audio id="roundwon-sound" preload="auto">
-        <source src="audio/roundwon.wav" type="audio/wav">
-        <source src="audio/roundwon.mp3" type="audio/mpeg">
-    </audio>
-    <audio id="gamelost-sound" preload="auto">
-        <source src="audio/gamelost.wav" type="audio/wav">
-        <source src="audio/gamelost.mp3" type="audio/mpeg">
-    </audio>
-    <audio id="gamewon-sound" preload="auto">
-        <source src="audio/gamewon.wav" type="audio/wav">
-        <source src="audio/gamewon.mp3" type="audio/mpeg">
-    </audio>
-    <audio id="life-gained-sound" preload="auto">
-        <source src="audio/life.wav" type="audio/wav">
-        <source src="audio/life.mp3" type="audio/mpeg">
-    </audio>
-    <audio id="streak-bonus-sound" preload="auto">
-        <source src="audio/streak.wav" type="audio/wav">
-        <source src="audio/streak.mp3" type="audio/mpeg">
-    </audio>
-    
-    <!-- Fallback Audio (Online-Quellen) -->
-    <audio id="fallback-correct" preload="none">
-        <source src="https://assets.mixkit.co/sfx/preview/mixkit-correct-answer-tone-2870.mp3" type="audio/mpeg">
-    </audio>
-    <audio id="fallback-error" preload="none">
-        <source src="https://assets.mixkit.co/sfx/preview/mixkit-wrong-answer-fail-notification-946.mp3" type="audio/mpeg">
-    </audio>
-    <audio id="fallback-win" preload="none">
-        <source src="https://assets.mixkit.co/sfx/preview/mixkit-winning-chimes-2015.mp3" type="audio/mpeg">
-    </audio>
-    <audio id="fallback-lose" preload="none">
-        <source src="https://assets.mixkit.co/sfx/preview/mixkit-losing-drums-2023.mp3" type="audio/mpeg">
-    </audio>
-    <audio id="fallback-bonus" preload="none">
-        <source src="https://assets.mixkit.co/sfx/preview/mixkit-achievement-bell-600.mp3" type="audio/mpeg">
-    </audio>
-
-    <!-- Audio Test Button (versteckt) -->
-    <button id="audio-test" style="display: none;" onclick="testAllAudio()">Audio Test</button>
-
-    <!-- Game Script -->
     <script>
-        // Initialisierung mit Device Detection
-        document.addEventListener('DOMContentLoaded', function() {
-            console.log('DOM geladen, Device:', detectDevice());
-            
-            // Device-spezifische Anpassungen
-            applyDeviceOptimizations();
-            
-            // Loading Screen nach kurzer Zeit ausblenden
-            setTimeout(function() {
-                const loadingScreen = document.getElementById('loading-screen');
-                const gameContainer = document.getElementById('game-container');
-                
-                if (loadingScreen && gameContainer) {
-                    loadingScreen.style.display = 'none';
-                    gameContainer.style.display = 'block';
+        // Game state
+        const gameState = {
+            currentScreen: 'start',
+            grade: null,
+            timeMode: null,
+            score: [], // Array of 'win' or 'lose' for each round
+            currentQuestion: 1,
+            totalQuestions: 7,
+            correctAnswers: 0,
+            wrongAnswers: 0,
+            timer: null,
+            timeLeft: 15,
+            isTraining: false,
+            trainingQuestions: 30,
+            currentTrainingQuestion: 1,
+            currentQuestionData: null,
+            wrestlerState: 6 // Start with neutral position (ringer6.png)
+        };
+
+        // Sound effects
+        const sounds = {
+            playSound: function(type) {
+                // For demo purposes, we'll use Web Audio API to generate sounds
+                // In a real implementation, you would load actual WAV files
+                try {
+                    const audioContext = new (window.AudioContext || window.webkitAudioContext)();
                     
-                    // Device-Warning anzeigen wenn nötig
-                    showDeviceWarning();
-                    
-                    console.log('Spiel geladen auf:', window.innerWidth + 'x' + window.innerHeight);
+                    if (type === 'start') {
+                        this.playBeep(audioContext, 523.25, 0.5); // C5
+                    } else if (type === 'correct') {
+                        this.playBeep(audioContext, 659.25, 0.3); // E5
+                    } else if (type === 'error') {
+                        this.playBeep(audioContext, 392.00, 0.3); // G4
+                    } else if (type === 'roundwon') {
+                        this.playMelody(audioContext, [659.25, 783.99], 0.2); // E5, G5
+                    } else if (type === 'roundlost') {
+                        this.playBeep(audioContext, 329.63, 0.5); // E4
+                    } else if (type === 'gamewon') {
+                        this.playMelody(audioContext, [659.25, 783.99, 1046.50, 1318.51], 0.15); // Victory melody
+                    } else if (type === 'gamelost') {
+                        this.playBeep(audioContext, 220.00, 0.7); // A3
+                    } else if (type === 'almostwon') {
+                        this.playMelody(audioContext, [783.99, 880.00], 0.2); // G5, A5
+                    } else if (type === 'almostlost') {
+                        this.playBeep(audioContext, 277.18, 0.4); // C#4
+                    }
+                } catch (e) {
+                    console.log("Audio context not supported");
                 }
-            }, 800);
-        });
-        
-        // Device Detection
-        function detectDevice() {
-            const width = window.innerWidth;
-            const ua = navigator.userAgent;
+            },
             
-            if (/Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(ua)) {
-                if (width < 768) return 'mobile';
-                return 'tablet';
+            playBeep: function(audioContext, frequency, duration) {
+                const oscillator = audioContext.createOscillator();
+                const gainNode = audioContext.createGain();
+                
+                oscillator.connect(gainNode);
+                gainNode.connect(audioContext.destination);
+                
+                oscillator.frequency.setValueAtTime(frequency, audioContext.currentTime);
+                gainNode.gain.setValueAtTime(0.3, audioContext.currentTime);
+                gainNode.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + duration);
+                
+                oscillator.start(audioContext.currentTime);
+                oscillator.stop(audioContext.currentTime + duration);
+            },
+            
+            playMelody: function(audioContext, frequencies, noteDuration) {
+                let time = audioContext.currentTime;
+                
+                frequencies.forEach((freq, index) => {
+                    const oscillator = audioContext.createOscillator();
+                    const gainNode = audioContext.createGain();
+                    
+                    oscillator.connect(gainNode);
+                    gainNode.connect(audioContext.destination);
+                    
+                    oscillator.frequency.setValueAtTime(freq, time);
+                    gainNode.gain.setValueAtTime(0.3, time);
+                    gainNode.gain.exponentialRampToValueAtTime(0.01, time + noteDuration);
+                    
+                    oscillator.start(time);
+                    oscillator.stop(time + noteDuration);
+                    
+                    time += noteDuration + 0.05;
+                });
             }
-            return 'desktop';
+        };
+
+        // Question generators for each grade level
+        const questionGenerators = {
+            // Grade 1: Addition/Subtraction up to 20
+            grade1: function() {
+                const operations = ['+', '-'];
+                const operation = operations[Math.floor(Math.random() * operations.length)];
+                
+                let a, b, result;
+                
+                if (operation === '+') {
+                    a = Math.floor(Math.random() * 11) + 5; // 5-15
+                    b = Math.floor(Math.random() * 11) + 5; // 5-15
+                    result = a + b;
+                    
+                    // Ensure result is <= 20
+                    while (result > 20) {
+                        a = Math.floor(Math.random() * 11) + 5;
+                        b = Math.floor(Math.random() * 11) + 5;
+                        result = a + b;
+                    }
+                } else {
+                    a = Math.floor(Math.random() * 16) + 5; // 5-20
+                    b = Math.floor(Math.random() * a) + 1; // 1 to a-1
+                    result = a - b;
+                }
+                
+                return {
+                    question: `${a} ${operation} ${b} = ?`,
+                    correctAnswer: result,
+                    operation: operation,
+                    a: a,
+                    b: b
+                };
+            },
+            
+            // Grade 2: Addition/Subtraction up to 100
+            grade2: function() {
+                const operations = ['+', '-'];
+                const operation = operations[Math.floor(Math.random() * operations.length)];
+                
+                let a, b, result;
+                
+                if (operation === '+') {
+                    a = Math.floor(Math.random() * 51) + 25; // 25-75
+                    b = Math.floor(Math.random() * 51) + 25; // 25-75
+                    result = a + b;
+                    
+                    // Ensure result is <= 100
+                    while (result > 100) {
+                        a = Math.floor(Math.random() * 51) + 25;
+                        b = Math.floor(Math.random() * 51) + 25;
+                        result = a + b;
+                    }
+                } else {
+                    a = Math.floor(Math.random() * 71) + 30; // 30-100
+                    b = Math.floor(Math.random() * (a - 10)) + 10; // 10 to a-1
+                    result = a - b;
+                }
+                
+                return {
+                    question: `${a} ${operation} ${b} = ?`,
+                    correctAnswer: result,
+                    operation: operation,
+                    a: a,
+                    b: b
+                };
+            },
+            
+            // Grade 3: Addition/Subtraction up to 1000, multiplication/division up to 10
+            grade3: function() {
+                const operations = ['+', '-', '×', '÷'];
+                const operation = operations[Math.floor(Math.random() * operations.length)];
+                
+                let a, b, result;
+                
+                if (operation === '+') {
+                    a = Math.floor(Math.random() * 501) + 250; // 250-750
+                    b = Math.floor(Math.random() * 501) + 250; // 250-750
+                    result = a + b;
+                    
+                    // Ensure result is <= 1000
+                    while (result > 1000) {
+                        a = Math.floor(Math.random() * 501) + 250;
+                        b = Math.floor(Math.random() * 501) + 250;
+                        result = a + b;
+                    }
+                } else if (operation === '-') {
+                    a = Math.floor(Math.random() * 701) + 300; // 300-1000
+                    b = Math.floor(Math.random() * (a - 100)) + 100; // 100 to a-1
+                    result = a - b;
+                } else if (operation === '×') {
+                    a = Math.floor(Math.random() * 10) + 1; // 1-10
+                    b = Math.floor(Math.random() * 10) + 1; // 1-10
+                    result = a * b;
+                } else { // division
+                    b = Math.floor(Math.random() * 9) + 2; // 2-10
+                    result = Math.floor(Math.random() * 9) + 2; // 2-10
+                    a = b * result; // Ensure it's a clean division
+                }
+                
+                return {
+                    question: `${a} ${operation} ${b} = ?`,
+                    correctAnswer: result,
+                    operation: operation,
+                    a: a,
+                    b: b
+                };
+            },
+            
+            // Grade 4: Addition/Subtraction up to 10000, multiplication up to 20, multiples of 10
+            grade4: function() {
+                const operations = ['+', '-', '×', '÷'];
+                const operation = operations[Math.floor(Math.random() * operations.length)];
+                
+                let a, b, result;
+                
+                if (operation === '+') {
+                    a = Math.floor(Math.random() * 5001) + 2500; // 2500-7500
+                    b = Math.floor(Math.random() * 5001) + 2500; // 2500-7500
+                    result = a + b;
+                    
+                    // Ensure result is <= 10000
+                    while (result > 10000) {
+                        a = Math.floor(Math.random() * 5001) + 2500;
+                        b = Math.floor(Math.random() * 5001) + 2500;
+                        result = a + b;
+                    }
+                } else if (operation === '-') {
+                    a = Math.floor(Math.random() * 7001) + 3000; // 3000-10000
+                    b = Math.floor(Math.random() * (a - 1000)) + 1000; // 1000 to a-1
+                    result = a - b;
+                } else if (operation === '×') {
+                    // 50% chance for normal multiplication, 50% for multiples of 10
+                    if (Math.random() > 0.5) {
+                        a = Math.floor(Math.random() * 20) + 1; // 1-20
+                        b = Math.floor(Math.random() * 20) + 1; // 1-20
+                        result = a * b;
+                    } else {
+                        // Multiples of 10
+                        a = (Math.floor(Math.random() * 10) + 1) * 10; // 10, 20, ..., 100
+                        b = Math.floor(Math.random() * 10) + 1; // 1-10
+                        result = a * b;
+                        
+                        // Ensure result <= 1000
+                        while (result > 1000) {
+                            a = (Math.floor(Math.random() * 10) + 1) * 10;
+                            b = Math.floor(Math.random() * 10) + 1;
+                            result = a * b;
+                        }
+                    }
+                } else { // division
+                    // 50% chance for normal division, 50% for multiples of 10 division
+                    if (Math.random() > 0.5) {
+                        b = Math.floor(Math.random() * 19) + 2; // 2-20
+                        result = Math.floor(Math.random() * 19) + 2; // 2-20
+                        a = b * result;
+                    } else {
+                        // Division with multiples of 10
+                        result = Math.floor(Math.random() * 9) + 2; // 2-10
+                        b = (Math.floor(Math.random() * 9) + 2) * 10; // 20, 30, ..., 100
+                        a = b * result;
+                        
+                        // Ensure a <= 1000
+                        while (a > 1000) {
+                            result = Math.floor(Math.random() * 9) + 2;
+                            b = (Math.floor(Math.random() * 9) + 2) * 10;
+                            a = b * result;
+                        }
+                    }
+                }
+                
+                return {
+                    question: `${a} ${operation} ${b} = ?`,
+                    correctAnswer: result,
+                    operation: operation,
+                    a: a,
+                    b: b
+                };
+            }
+        };
+
+        // Initialize the game
+        function initGame() {
+            // Set up event listeners
+            document.getElementById('grade1').addEventListener('click', () => selectGrade(1));
+            document.getElementById('grade2').addEventListener('click', () => selectGrade(2));
+            document.getElementById('grade3').addEventListener('click', () => selectGrade(3));
+            document.getElementById('grade4').addEventListener('click', () => selectGrade(4));
+            
+            document.getElementById('time-hard').addEventListener('click', () => selectTimeMode('hard'));
+            document.getElementById('time-medium').addEventListener('click', () => selectTimeMode('medium'));
+            document.getElementById('time-easy').addEventListener('click', () => selectTimeMode('easy'));
+            document.getElementById('training-mode').addEventListener('click', () => selectTimeMode('training'));
+            
+            document.getElementById('back-to-grades').addEventListener('click', goBackToGrades);
+            document.getElementById('play-again').addEventListener('click', restartGame);
+            document.getElementById('back-to-start').addEventListener('click', goBackToStart);
+            
+            // Initialize wrestler display
+            updateWrestler(6);
         }
-        
-        // Device-spezifische Optimierungen
-        function applyDeviceOptimizations() {
-            const device = detectDevice();
-            const body = document.body;
+
+        // Switch between screens
+        function showScreen(screenId) {
+            document.querySelectorAll('.screen').forEach(screen => {
+                screen.classList.remove('active');
+            });
+            document.getElementById(screenId).classList.add('active');
+            gameState.currentScreen = screenId;
+        }
+
+        // Grade selection
+        function selectGrade(grade) {
+            gameState.grade = grade;
+            showScreen('time-screen');
+        }
+
+        // Time mode selection
+        function selectTimeMode(mode) {
+            gameState.timeMode = mode;
             
-            switch(device) {
-                case 'mobile':
-                    body.style.fontSize = '14px';
-                    body.style.padding = '5px';
-                    break;
-                case 'tablet':
-                    body.style.fontSize = '15px';
-                    body.style.padding = '10px';
-                    break;
-                case 'desktop':
-                    body.style.fontSize = '16px';
-                    break;
+            // Set time based on mode
+            if (mode === 'hard') {
+                gameState.timeLeft = 5;
+            } else if (mode === 'medium') {
+                gameState.timeLeft = 8;
+            } else if (mode === 'easy') {
+                gameState.timeLeft = 15;
+            } else if (mode === 'training') {
+                gameState.isTraining = true;
+                gameState.totalQuestions = gameState.trainingQuestions;
             }
             
-            // Touch device optimizations
-            if (device === 'mobile' || device === 'tablet') {
-                document.documentElement.style.setProperty('--touch-friendly', '10px');
+            // Play start sound
+            sounds.playSound('start');
+            
+            // Start the game
+            startGame();
+        }
+
+        // Go back to grade selection
+        function goBackToGrades() {
+            showScreen('start-screen');
+        }
+
+        // Start the game
+        function startGame() {
+            // Reset game state
+            gameState.score = [];
+            gameState.currentQuestion = 1;
+            gameState.correctAnswers = 0;
+            gameState.wrongAnswers = 0;
+            gameState.currentTrainingQuestion = 1;
+            gameState.wrestlerState = 6;
+            
+            // Update total questions display
+            document.getElementById('total-questions').textContent = gameState.isTraining ? 
+                gameState.trainingQuestions : 7;
+            
+            // Show game screen
+            showScreen('game-screen');
+            
+            // Initialize score display
+            initScoreDisplay();
+            
+            // Update wrestler display
+            updateWrestler(6);
+            
+            // Start the first question
+            generateQuestion();
+            
+            // Start timer if not in training mode
+            if (!gameState.isTraining) {
+                startTimer();
+            } else {
+                document.getElementById('timer-display').textContent = "Training";
+                document.getElementById('training-info').textContent = 
+                    `Frage ${gameState.currentTrainingQuestion} von ${gameState.trainingQuestions}`;
+                updateProgressBar();
             }
         }
-        
-        // Device-Warning anzeigen
-        function showDeviceWarning() {
-            const device = detectDevice();
-            const warningElement = document.getElementById('device-warning');
+
+        // Initialize score display (circles for each round)
+        function initScoreDisplay() {
+            const scoreDisplay = document.getElementById('score-display');
+            scoreDisplay.innerHTML = '';
             
-            if ((device === 'mobile' || device === 'tablet') && warningElement) {
-                warningElement.style.display = 'flex';
-                setTimeout(() => {
-                    warningElement.style.opacity = '0';
-                    setTimeout(() => {
-                        warningElement.style.display = 'none';
-                    }, 1000);
-                }, 3000);
+            const totalRounds = gameState.isTraining ? 1 : 7;
+            
+            for (let i = 0; i < totalRounds; i++) {
+                const circle = document.createElement('div');
+                circle.className = 'score-circle';
+                if (i === 0) circle.classList.add('active');
+                circle.textContent = i + 1;
+                scoreDisplay.appendChild(circle);
             }
         }
-        
-        // Audio Test Funktion
-        function testAllAudio() {
-            const sounds = ['correct-sound', 'error-sound', 'gamewon-sound'];
-            sounds.forEach(soundId => {
-                const audio = document.getElementById(soundId);
-                if (audio) {
-                    audio.currentTime = 0;
-                    audio.play().catch(e => console.log('Audio test failed for', soundId));
+
+        // Update score display
+        function updateScoreDisplay() {
+            const circles = document.querySelectorAll('.score-circle');
+            
+            circles.forEach((circle, index) => {
+                circle.classList.remove('won', 'lost', 'active');
+                
+                if (gameState.score[index] === 'win') {
+                    circle.classList.add('won');
+                } else if (gameState.score[index] === 'lose') {
+                    circle.classList.add('lost');
+                }
+                
+                // Highlight current question
+                if (index === (gameState.isTraining ? 0 : gameState.currentQuestion - 1)) {
+                    circle.classList.add('active');
                 }
             });
         }
-        
-        // Window Resize Handler
-        let resizeTimer;
-        window.addEventListener('resize', function() {
-            clearTimeout(resizeTimer);
-            resizeTimer = setTimeout(function() {
-                applyDeviceOptimizations();
-                console.log('Resized to:', window.innerWidth + 'x' + window.innerHeight);
-            }, 250);
-        });
-        
-        // Error Handling
-        window.addEventListener('error', function(e) {
-            console.error('Error:', e.message, 'in', e.filename);
-        });
-        
-        // Touch event prevention for better performance
-        document.addEventListener('touchstart', function(e) {
-            if (e.touches.length > 1) {
-                e.preventDefault();
+
+        // Update wrestler display based on current state
+        function updateWrestler(state) {
+            gameState.wrestlerState = state;
+            const wrestlerDisplay = document.getElementById('wrestler-display');
+            
+            // In a real implementation, you would use actual image files
+            // For this demo, we'll create a visual representation
+            wrestlerDisplay.style.backgroundImage = `none`;
+            
+            // Create a visual representation of the wrestler state
+            let backgroundColor, wrestlerText;
+            
+            if (state <= 5) {
+                // CPU is winning (states 1-5)
+                const intensity = 6 - state; // Higher number = more CPU advantage
+                backgroundColor = `rgba(239, 71, 111, ${0.2 + intensity * 0.1})`;
+                wrestlerText = `CPU führt ${6 - state}:${state - 1}`;
+            } else if (state >= 7) {
+                // Player is winning (states 7-11)
+                const intensity = state - 6; // Higher number = more player advantage
+                backgroundColor = `rgba(6, 214, 160, ${0.2 + intensity * 0.1})`;
+                wrestlerText = `Spieler führt ${state - 6}:${11 - state}`;
+            } else {
+                // Neutral (state 6)
+                backgroundColor = `rgba(67, 97, 238, 0.3)`;
+                wrestlerText = "Ausgangsposition";
             }
-        }, { passive: false });
-        
-        // Prevent context menu on long press for mobile
-        document.addEventListener('contextmenu', function(e) {
-            if (detectDevice() === 'mobile' || detectDevice() === 'tablet') {
-                e.preventDefault();
+            
+            wrestlerDisplay.style.backgroundColor = backgroundColor;
+            wrestlerDisplay.innerHTML = `<div style="display: flex; align-items: center; justify-content: center; height: 100%; font-size: 1.2rem; color: white; text-shadow: 2px 2px 4px rgba(0,0,0,0.5);">${wrestlerText}<br>ringer${state}.png</div>`;
+            
+            // Play special sounds for certain states
+            if (state === 2) {
+                sounds.playSound('almostlost');
+            } else if (state === 10) {
+                sounds.playSound('almostwon');
             }
-        });
+        }
+
+        // Update progress bar for training mode
+        function updateProgressBar() {
+            if (gameState.isTraining) {
+                const progress = (gameState.currentTrainingQuestion - 1) / gameState.trainingQuestions * 100;
+                document.getElementById('progress-fill').style.width = `${progress}%`;
+            }
+        }
+
+        // Generate a new question
+        function generateQuestion() {
+            // Start with neutral wrestler position
+            updateWrestler(6);
+            
+            // Get the appropriate question generator
+            const generator = questionGenerators[`grade${gameState.grade}`];
+            const questionData = generator();
+            gameState.currentQuestionData = questionData;
+            
+            // Display the question
+            document.getElementById('question').textContent = questionData.question;
+            
+            // Generate answer options (1 correct, 3 wrong)
+            const answers = generateWrongAnswers(questionData.correctAnswer);
+            
+            // Display answer buttons
+            const answerButtons = document.getElementById('answer-buttons');
+            answerButtons.innerHTML = '';
+            
+            // Shuffle answers
+            const shuffledAnswers = shuffleArray([...answers]);
+            
+            shuffledAnswers.forEach(answer => {
+                const button = document.createElement('button');
+                button.className = 'answer-button';
+                button.textContent = answer;
+                button.addEventListener('click', () => checkAnswer(answer, questionData.correctAnswer));
+                answerButtons.appendChild(button);
+            });
+            
+            // Update UI
+            document.getElementById('question-number').textContent = gameState.isTraining ? 
+                gameState.currentTrainingQuestion : gameState.currentQuestion;
+            document.getElementById('correct-count').textContent = gameState.correctAnswers;
+            document.getElementById('wrong-count').textContent = gameState.wrongAnswers;
+            
+            // Hide result message
+            document.getElementById('result-message').style.display = 'none';
+            
+            // Reset timer if not in training mode
+            if (!gameState.isTraining) {
+                gameState.timeLeft = getTimeForMode();
+                document.getElementById('timer-display').textContent = gameState.timeLeft;
+            } else {
+                document.getElementById('training-info').textContent = 
+                    `Frage ${gameState.currentTrainingQuestion} von ${gameState.trainingQuestions}`;
+            }
+            
+            // Update score display
+            updateScoreDisplay();
+            updateProgressBar();
+        }
+
+        // Generate wrong answers
+        function generateWrongAnswers(correctAnswer) {
+            const answers = [correctAnswer];
+            
+            // Generate 3 wrong answers that are somewhat close to the correct answer
+            for (let i = 0; i < 3; i++) {
+                let wrongAnswer;
+                do {
+                    // Generate a wrong answer that's different from the correct one
+                    const offset = Math.floor(Math.random() * 10) + 1;
+                    const direction = Math.random() > 0.5 ? 1 : -1;
+                    wrongAnswer = correctAnswer + (offset * direction);
+                    
+                    // Ensure it's positive and not too far off for small numbers
+                    if (correctAnswer < 10) {
+                        wrongAnswer = Math.max(1, wrongAnswer);
+                        wrongAnswer = Math.min(20, wrongAnswer);
+                    } else if (correctAnswer < 100) {
+                        wrongAnswer = Math.max(1, wrongAnswer);
+                    }
+                    
+                } while (answers.includes(wrongAnswer) || wrongAnswer === correctAnswer || wrongAnswer <= 0);
+                
+                answers.push(wrongAnswer);
+            }
+            
+            return answers;
+        }
+
+        // Shuffle array
+        function shuffleArray(array) {
+            for (let i = array.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [array[i], array[j]] = [array[j], array[i]];
+            }
+            return array;
+        }
+
+        // Get time based on selected mode
+        function getTimeForMode() {
+            switch(gameState.timeMode) {
+                case 'hard': return 5;
+                case 'medium': return 8;
+                case 'easy': return 15;
+                default: return 15;
+            }
+        }
+
+        // Start the timer
+        function startTimer() {
+            clearInterval(gameState.timer);
+            
+            gameState.timer = setInterval(() => {
+                gameState.timeLeft--;
+                document.getElementById('timer-display').textContent = gameState.timeLeft;
+                
+                if (gameState.timeLeft <= 0) {
+                    // Time's up - wrong answer
+                    clearInterval(gameState.timer);
+                    handleWrongAnswer();
+                }
+            }, 1000);
+        }
+
+        // Calculate new wrestler state based on game score
+        function calculateWrestlerState() {
+            if (gameState.isTraining) {
+                // In training mode, use correct/wrong ratio
+                const total = gameState.correctAnswers + gameState.wrongAnswers;
+                if (total === 0) return 6;
+                
+                const ratio = gameState.correctAnswers / total;
+                // Map ratio 0-1 to wrestler states 1-11
+                return Math.floor(ratio * 10) + 1;
+            } else {
+                // In battle mode (best of 7)
+                const wins = gameState.score.filter(result => result === 'win').length;
+                const losses = gameState.score.filter(result => result === 'lose').length;
+                
+                if (wins === 0 && losses === 0) return 6;
+                
+                // Map win/loss difference to wrestler states
+                const difference = wins - losses;
+                // Clamp between -5 and 5, then shift to 1-11 range
+                return Math.max(1, Math.min(11, 6 + difference));
+            }
+        }
+
+        // Check the selected answer
+        function checkAnswer(selectedAnswer, correctAnswer) {
+            clearInterval(gameState.timer);
+            
+            if (selectedAnswer === correctAnswer) {
+                handleCorrectAnswer();
+            } else {
+                handleWrongAnswer();
+            }
+        }
+
+        // Handle correct answer
+        function handleCorrectAnswer() {
+            // Play correct sound
+            sounds.playSound('correct');
+            
+            // Update game state
+            gameState.correctAnswers++;
+            gameState.score.push('win');
+            
+            // Calculate new wrestler state
+            const newWrestlerState = calculateWrestlerState();
+            updateWrestler(newWrestlerState);
+            
+            // Update UI
+            document.getElementById('correct-count').textContent = gameState.correctAnswers;
+            
+            // Show correct message
+            const resultMessage = document.getElementById('result-message');
+            resultMessage.textContent = 'Richtig! Sehr gut!';
+            resultMessage.className = 'result-message correct-message';
+            resultMessage.style.display = 'block';
+            
+            // Highlight correct button
+            const buttons = document.querySelectorAll('.answer-button');
+            buttons.forEach(button => {
+                if (parseInt(button.textContent) === gameState.currentQuestionData.correctAnswer) {
+                    button.classList.add('correct');
+                }
+                button.disabled = true;
+            });
+            
+            // Play round won sound if not in training mode
+            if (!gameState.isTraining) {
+                sounds.playSound('roundwon');
+            }
+            
+            // Move to next question after delay
+            setTimeout(nextQuestion, 2000);
+        }
+
+        // Handle wrong answer
+        function handleWrongAnswer() {
+            // Play error sound
+            sounds.playSound('error');
+            
+            // Update game state
+            gameState.wrongAnswers++;
+            gameState.score.push('lose');
+            
+            // Calculate new wrestler state
+            const newWrestlerState = calculateWrestlerState();
+            updateWrestler(newWrestlerState);
+            
+            // Update UI
+            document.getElementById('wrong-count').textContent = gameState.wrongAnswers;
+            
+            // Show wrong message
+            const resultMessage = document.getElementById('result-message');
+            resultMessage.textContent = `Leider falsch. Die richtige Antwort ist ${gameState.currentQuestionData.correctAnswer}.`;
+            resultMessage.className = 'result-message wrong-message';
+            resultMessage.style.display = 'block';
+            
+            // Highlight correct and wrong buttons
+            const buttons = document.querySelectorAll('.answer-button');
+            buttons.forEach(button => {
+                const buttonValue = parseInt(button.textContent);
+                if (buttonValue === gameState.currentQuestionData.correctAnswer) {
+                    button.classList.add('correct');
+                } else if (buttonValue !== gameState.currentQuestionData.correctAnswer) {
+                    button.classList.add('wrong');
+                }
+                button.disabled = true;
+            });
+            
+            // Play round lost sound if not in training mode
+            if (!gameState.isTraining) {
+                sounds.playSound('roundlost');
+            }
+            
+            // Move to next question after delay
+            setTimeout(nextQuestion, 2000);
+        }
+
+        // Move to next question or end game
+        function nextQuestion() {
+            if (gameState.isTraining) {
+                gameState.currentTrainingQuestion++;
+                
+                if (gameState.currentTrainingQuestion > gameState.trainingQuestions) {
+                    endGame();
+                } else {
+                    generateQuestion();
+                }
+            } else {
+                gameState.currentQuestion++;
+                
+                // Check if game is over (best of 7)
+                const wins = gameState.score.filter(result => result === 'win').length;
+                const losses = gameState.score.filter(result => result === 'lose').length;
+                
+                if (wins >= 4 || losses >= 4 || gameState.currentQuestion > 7) {
+                    endGame();
+                } else {
+                    generateQuestion();
+                    
+                    // Restart timer if not in training mode
+                    if (!gameState.isTraining) {
+                        gameState.timeLeft = getTimeForMode();
+                        document.getElementById('timer-display').textContent = gameState.timeLeft;
+                        startTimer();
+                    }
+                }
+            }
+        }
+
+        // End the game
+        function endGame() {
+            clearInterval(gameState.timer);
+            
+            // Calculate final wrestler state
+            const finalWrestlerState = calculateWrestlerState();
+            
+            // Update final wrestler display
+            const finalWrestler = document.getElementById('final-wrestler');
+            let finalBackgroundColor, finalText;
+            
+            if (finalWrestlerState <= 5) {
+                finalBackgroundColor = `rgba(239, 71, 111, 0.7)`;
+                finalText = `ringer${finalWrestlerState}.png<br>CPU gewinnt!`;
+            } else if (finalWrestlerState >= 7) {
+                finalBackgroundColor = `rgba(6, 214, 160, 0.7)`;
+                finalText = `ringer${finalWrestlerState}.png<br>Spieler gewinnt!`;
+            } else {
+                finalBackgroundColor = `rgba(67, 97, 238, 0.7)`;
+                finalText = `ringer6.png<br>Unentschieden!`;
+            }
+            
+            finalWrestler.style.backgroundColor = finalBackgroundColor;
+            finalWrestler.innerHTML = `<div style="display: flex; align-items: center; justify-content: center; height: 100%; font-size: 1.2rem; color: white; text-shadow: 2px 2px 4px rgba(0,0,0,0.5);">${finalText}</div>`;
+            
+            // Update final stats
+            document.getElementById('final-correct').textContent = gameState.correctAnswers;
+            document.getElementById('final-wrong').textContent = gameState.wrongAnswers;
+            
+            // Set final mode text
+            let modeText = '';
+            if (gameState.isTraining) {
+                modeText = 'Trainingsmodus';
+            } else {
+                switch(gameState.timeMode) {
+                    case 'hard': modeText = 'Schwierig (5 Sek.)'; break;
+                    case 'medium': modeText = 'Mittel (8 Sek.)'; break;
+                    case 'easy': modeText = 'Einfach (15 Sek.)'; break;
+                }
+            }
+            document.getElementById('final-mode').textContent = modeText;
+            
+            // Set final grade text
+            document.getElementById('final-grade').textContent = `${gameState.grade}. Klasse`;
+            
+            // Determine win/loss
+            const wins = gameState.score.filter(result => result === 'win').length;
+            const losses = gameState.score.filter(result => result === 'lose').length;
+            
+            const finalResult = document.getElementById('final-result');
+            if (wins > losses) {
+                finalResult.textContent = 'Herzlichen Glückwunsch! Du hast gewonnen!';
+                finalResult.className = 'final-result win';
+                sounds.playSound('gamewon');
+            } else if (losses > wins) {
+                finalResult.textContent = 'Leider verloren! Versuche es nochmal!';
+                finalResult.className = 'final-result lose';
+                sounds.playSound('gamelost');
+            } else {
+                finalResult.textContent = 'Unentschieden! Gutes Spiel!';
+                finalResult.className = 'final-result';
+            }
+            
+            // Show game over screen
+            showScreen('game-over-screen');
+        }
+
+        // Restart game with same settings
+        function restartGame() {
+            if (gameState.isTraining) {
+                selectTimeMode('training');
+            } else {
+                selectTimeMode(gameState.timeMode);
+            }
+        }
+
+        // Go back to start screen
+        function goBackToStart() {
+            showScreen('start-screen');
+        }
+
+        // Initialize the game when page loads
+        document.addEventListener('DOMContentLoaded', initGame);
     </script>
-    
-    <!-- Main Game Script -->
-    <script src="script.js"></script>
 </body>
 </html>
