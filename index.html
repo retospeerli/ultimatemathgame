@@ -1,0 +1,470 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Umlaut-Meister Wettkampf - Mehrzahlbildung</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="style.css">
+    <style>
+        /* Responsive Base Styles */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            -webkit-tap-highlight-color: transparent;
+            -webkit-text-size-adjust: 100%;
+        }
+        
+        html {
+            font-size: 16px;
+        }
+        
+        body {
+            background: linear-gradient(135deg, #ff6b6b 0%, #ffd166 100%);
+            min-height: 100vh;
+            min-height: -webkit-fill-available;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 10px;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen-Sans, Ubuntu, Cantarell, sans-serif;
+            overflow-x: hidden;
+            touch-action: manipulation;
+        }
+        
+        /* Loading Screen */
+        .loading {
+            text-align: center;
+            color: white;
+            font-size: clamp(18px, 5vw, 24px);
+            padding: 20px;
+        }
+        
+        .loading i {
+            display: block;
+            font-size: clamp(36px, 10vw, 48px);
+            margin-bottom: 15px;
+            animation: spin 2s linear infinite;
+        }
+        
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        
+        /* Hide scrollbar for touch devices */
+        @media (max-width: 768px) {
+            body::-webkit-scrollbar {
+                display: none;
+            }
+            
+            body {
+                -ms-overflow-style: none;
+                scrollbar-width: none;
+            }
+        }
+        
+        /* Prevent zoom on input focus for mobile */
+        @media screen and (max-width: 768px) {
+            input, select, textarea {
+                font-size: 16px !important;
+            }
+        }
+        
+        /* High DPI screens optimization */
+        @media (-webkit-min-device-pixel-ratio: 2), (min-resolution: 192dpi) {
+            .container {
+                border-width: 2px;
+            }
+        }
+        
+        /* Print styles */
+        @media print {
+            .game-area, .control-buttons, .modal-overlay {
+                display: none !important;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Loading Screen -->
+    <div id="loading-screen" class="loading">
+        <i class="fas fa-trophy"></i>
+        <p>Lade Umlaut-Meister Wettkampf...</p>
+    </div>
+    
+    <!-- Main Game Container -->
+    <div id="game-container" style="display: none;">
+        <div class="container">
+            <!-- Header mit Wettkampf-Design -->
+            <header class="header">
+                <div class="logo-section">
+                    <div class="logo">
+                        <i class="fas fa-crown"></i>
+                        <span class="logo-text">Umlaut-Meister WETTKAMPF</span>
+                    </div>
+                    <div class="level-indicator">
+                        <i class="fas fa-bolt"></i>
+                        <span class="level-text">Challenge: 50 Wörter</span>
+                    </div>
+                </div>
+                
+                <div class="game-stats">
+                    <div class="stat-item">
+                        <span class="stat-label">Punkte</span>
+                        <span class="stat-value" id="score">0</span>
+                    </div>
+                    <div class="stat-item">
+                        <span class="stat-label">Serie</span>
+                        <span class="stat-value" id="streak-counter">0</span>
+                    </div>
+                    <div class="stat-item">
+                        <span class="stat-label">Wörter</span>
+                        <span class="stat-value" id="correct-counter">0/50</span>
+                    </div>
+                </div>
+            </header>
+
+            <!-- Lebenspunkte und Wettkampf-Bar -->
+            <div class="competition-container">
+                <div class="lives-section">
+                    <div class="lives-title">
+                        <i class="fas fa-heart"></i>
+                        <span>Lebenspunkte</span>
+                    </div>
+                    <div class="hearts" id="hearts">
+                        <i class="fas fa-heart live"></i>
+                        <i class="fas fa-heart live"></i>
+                        <i class="fas fa-heart live"></i>
+                    </div>
+                </div>
+                
+                <div class="streak-bonus-section">
+                    <div class="streak-bonus" id="streak-bonus">
+                        <i class="fas fa-bolt"></i>
+                        <span class="streak-text">+1 Leben bei 5er Serie!</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Progress Bar -->
+            <div class="progress-container">
+                <div class="progress-title">
+                    <i class="fas fa-flag-checkered"></i>
+                    <span>Wettkampf-Fortschritt</span>
+                </div>
+                <div class="word-counter">
+                    <div class="progress-bar">
+                        <div class="progress-fill" id="progress-fill"></div>
+                    </div>
+                    <div class="progress-text">
+                        <span id="progress-text">0/50 Wörter - Wettkampf läuft!</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Main Game Area -->
+            <main class="game-area">
+                <!-- Word Display -->
+                <div class="word-display-container">
+                    <div class="word-prompt">
+                        <i class="fas fa-fire"></i>
+                        <span>WETTKAMPF: Wähle die richtige Mehrzahl!</span>
+                    </div>
+                    <div class="singular-word" id="singular-word">
+                        <span id="word-singular">BEREIT?</span>
+                        <div class="word-hint">Einzahl - Achtung auf Umlaute!</div>
+                    </div>
+                    <div class="device-warning" id="device-warning">
+                        <i class="fas fa-mobile-alt"></i>
+                        <span>Tippe auf die richtige Antwort</span>
+                    </div>
+                </div>
+
+                <!-- Answer Buttons -->
+                <div class="answer-buttons" id="answer-buttons">
+                    <!-- Buttons werden durch JavaScript erzeugt -->
+                </div>
+
+                <!-- Feedback Area -->
+                <div class="feedback-area">
+                    <div class="feedback-message" id="feedback-message">
+                        Klicke auf "Wettkampf starten"!
+                    </div>
+                    <div class="feedback-details" id="feedback-details">
+                        Ziel: 50 richtige Mehrzahlformen - Jeder Fehler kostet ein Leben!
+                    </div>
+                </div>
+
+                <!-- Control Buttons -->
+                <div class="control-buttons">
+                    <button id="start-btn" class="control-btn start-btn">
+                        <i class="fas fa-play-circle"></i>
+                        <span class="btn-text">Wettkampf starten</span>
+                    </button>
+                    <button id="hint-btn" class="control-btn hint-btn" disabled>
+                        <i class="fas fa-lightbulb"></i>
+                        <span class="btn-text">Tipp (-5P)</span>
+                    </button>
+                    <button id="skip-btn" class="control-btn skip-btn" disabled>
+                        <i class="fas fa-forward"></i>
+                        <span class="btn-text">Überspringen (-10P)</span>
+                    </button>
+                </div>
+            </main>
+
+            <!-- Game Log -->
+            <div class="game-log" id="game-log">
+                <div class="game-log-header">
+                    <i class="fas fa-scroll"></i>
+                    <span>Wettkampf-Log</span>
+                </div>
+                <div class="game-log-content" id="game-log-content">
+                    Willkommen zum Umlaut-Meister WETTKAMPF! Ziel: 50 von 50!
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- End Game Modal -->
+    <div class="modal-overlay" id="end-modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <i class="fas fa-trophy" id="modal-icon"></i>
+                <h2 id="modal-title">WETTKAMPF BEENDET!</h2>
+            </div>
+            
+            <div class="result-stats">
+                <div class="result-item">
+                    <span class="result-label">Finale Punktzahl:</span>
+                    <span class="result-value" id="final-score">0</span>
+                </div>
+                <div class="result-item">
+                    <span class="result-label">Richtige Antworten:</span>
+                    <span class="result-value" id="final-correct">0/50</span>
+                </div>
+                <div class="result-item">
+                    <span class="result-label">Falsche Antworten:</span>
+                    <span class="result-value" id="final-wrong">0</span>
+                </div>
+                <div class="result-item">
+                    <span class="result-label">Übersprungen:</span>
+                    <span class="result-value" id="final-skipped">0</span>
+                </div>
+                <div class="result-item">
+                    <span class="result-label">Beste Serie:</span>
+                    <span class="result-value" id="final-streak">0</span>
+                </div>
+                <div class="result-item">
+                    <span class="result-label">Verbleibende Leben:</span>
+                    <span class="result-value" id="final-lives">0</span>
+                </div>
+                <div class="result-item">
+                    <span class="result-label">Genauigkeit:</span>
+                    <span class="result-value" id="final-accuracy">0%</span>
+                </div>
+            </div>
+
+            <div class="achievement-badges" id="achievement-badges">
+                <h3><i class="fas fa-medal"></i> Errungenschaften:</h3>
+                <div id="badges-list">Wird berechnet...</div>
+            </div>
+
+            <div class="modal-buttons">
+                <button id="restart-btn" class="modal-btn restart-btn">
+                    <i class="fas fa-redo"></i>
+                    <span>Neuer Wettkampf</span>
+                </button>
+                <button id="share-btn" class="modal-btn share-btn">
+                    <i class="fas fa-share-alt"></i>
+                    <span>Ergebnis teilen</span>
+                </button>
+                <button id="close-btn" class="modal-btn close-btn">
+                    <i class="fas fa-times"></i>
+                    <span>Schließen</span>
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- ==================== ALLE AUDIO EFFEKTE ==================== -->
+    <!-- Haupt-Audio (lokale Dateien) -->
+    <audio id="correct-sound" preload="auto">
+        <source src="audio/correct.wav" type="audio/wav">
+        <source src="audio/correct.mp3" type="audio/mpeg">
+    </audio>
+    <audio id="error-sound" preload="auto">
+        <source src="audio/error.wav" type="audio/wav">
+        <source src="audio/error.mp3" type="audio/mpeg">
+    </audio>
+    <audio id="roundlost-sound" preload="auto">
+        <source src="audio/roundlost.wav" type="audio/wav">
+        <source src="audio/roundlost.mp3" type="audio/mpeg">
+    </audio>
+    <audio id="roundwon-sound" preload="auto">
+        <source src="audio/roundwon.wav" type="audio/wav">
+        <source src="audio/roundwon.mp3" type="audio/mpeg">
+    </audio>
+    <audio id="gamelost-sound" preload="auto">
+        <source src="audio/gamelost.wav" type="audio/wav">
+        <source src="audio/gamelost.mp3" type="audio/mpeg">
+    </audio>
+    <audio id="gamewon-sound" preload="auto">
+        <source src="audio/gamewon.wav" type="audio/wav">
+        <source src="audio/gamewon.mp3" type="audio/mpeg">
+    </audio>
+    <audio id="life-gained-sound" preload="auto">
+        <source src="audio/life.wav" type="audio/wav">
+        <source src="audio/life.mp3" type="audio/mpeg">
+    </audio>
+    <audio id="streak-bonus-sound" preload="auto">
+        <source src="audio/streak.wav" type="audio/wav">
+        <source src="audio/streak.mp3" type="audio/mpeg">
+    </audio>
+    
+    <!-- Fallback Audio (Online-Quellen) -->
+    <audio id="fallback-correct" preload="none">
+        <source src="https://assets.mixkit.co/sfx/preview/mixkit-correct-answer-tone-2870.mp3" type="audio/mpeg">
+    </audio>
+    <audio id="fallback-error" preload="none">
+        <source src="https://assets.mixkit.co/sfx/preview/mixkit-wrong-answer-fail-notification-946.mp3" type="audio/mpeg">
+    </audio>
+    <audio id="fallback-win" preload="none">
+        <source src="https://assets.mixkit.co/sfx/preview/mixkit-winning-chimes-2015.mp3" type="audio/mpeg">
+    </audio>
+    <audio id="fallback-lose" preload="none">
+        <source src="https://assets.mixkit.co/sfx/preview/mixkit-losing-drums-2023.mp3" type="audio/mpeg">
+    </audio>
+    <audio id="fallback-bonus" preload="none">
+        <source src="https://assets.mixkit.co/sfx/preview/mixkit-achievement-bell-600.mp3" type="audio/mpeg">
+    </audio>
+
+    <!-- Audio Test Button (versteckt) -->
+    <button id="audio-test" style="display: none;" onclick="testAllAudio()">Audio Test</button>
+
+    <!-- Game Script -->
+    <script>
+        // Initialisierung mit Device Detection
+        document.addEventListener('DOMContentLoaded', function() {
+            console.log('DOM geladen, Device:', detectDevice());
+            
+            // Device-spezifische Anpassungen
+            applyDeviceOptimizations();
+            
+            // Loading Screen nach kurzer Zeit ausblenden
+            setTimeout(function() {
+                const loadingScreen = document.getElementById('loading-screen');
+                const gameContainer = document.getElementById('game-container');
+                
+                if (loadingScreen && gameContainer) {
+                    loadingScreen.style.display = 'none';
+                    gameContainer.style.display = 'block';
+                    
+                    // Device-Warning anzeigen wenn nötig
+                    showDeviceWarning();
+                    
+                    console.log('Spiel geladen auf:', window.innerWidth + 'x' + window.innerHeight);
+                }
+            }, 800);
+        });
+        
+        // Device Detection
+        function detectDevice() {
+            const width = window.innerWidth;
+            const ua = navigator.userAgent;
+            
+            if (/Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(ua)) {
+                if (width < 768) return 'mobile';
+                return 'tablet';
+            }
+            return 'desktop';
+        }
+        
+        // Device-spezifische Optimierungen
+        function applyDeviceOptimizations() {
+            const device = detectDevice();
+            const body = document.body;
+            
+            switch(device) {
+                case 'mobile':
+                    body.style.fontSize = '14px';
+                    body.style.padding = '5px';
+                    break;
+                case 'tablet':
+                    body.style.fontSize = '15px';
+                    body.style.padding = '10px';
+                    break;
+                case 'desktop':
+                    body.style.fontSize = '16px';
+                    break;
+            }
+            
+            // Touch device optimizations
+            if (device === 'mobile' || device === 'tablet') {
+                document.documentElement.style.setProperty('--touch-friendly', '10px');
+            }
+        }
+        
+        // Device-Warning anzeigen
+        function showDeviceWarning() {
+            const device = detectDevice();
+            const warningElement = document.getElementById('device-warning');
+            
+            if ((device === 'mobile' || device === 'tablet') && warningElement) {
+                warningElement.style.display = 'flex';
+                setTimeout(() => {
+                    warningElement.style.opacity = '0';
+                    setTimeout(() => {
+                        warningElement.style.display = 'none';
+                    }, 1000);
+                }, 3000);
+            }
+        }
+        
+        // Audio Test Funktion
+        function testAllAudio() {
+            const sounds = ['correct-sound', 'error-sound', 'gamewon-sound'];
+            sounds.forEach(soundId => {
+                const audio = document.getElementById(soundId);
+                if (audio) {
+                    audio.currentTime = 0;
+                    audio.play().catch(e => console.log('Audio test failed for', soundId));
+                }
+            });
+        }
+        
+        // Window Resize Handler
+        let resizeTimer;
+        window.addEventListener('resize', function() {
+            clearTimeout(resizeTimer);
+            resizeTimer = setTimeout(function() {
+                applyDeviceOptimizations();
+                console.log('Resized to:', window.innerWidth + 'x' + window.innerHeight);
+            }, 250);
+        });
+        
+        // Error Handling
+        window.addEventListener('error', function(e) {
+            console.error('Error:', e.message, 'in', e.filename);
+        });
+        
+        // Touch event prevention for better performance
+        document.addEventListener('touchstart', function(e) {
+            if (e.touches.length > 1) {
+                e.preventDefault();
+            }
+        }, { passive: false });
+        
+        // Prevent context menu on long press for mobile
+        document.addEventListener('contextmenu', function(e) {
+            if (detectDevice() === 'mobile' || detectDevice() === 'tablet') {
+                e.preventDefault();
+            }
+        });
+    </script>
+    
+    <!-- Main Game Script -->
+    <script src="script.js"></script>
+</body>
+</html>
