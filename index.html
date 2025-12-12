@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Ultimate Math Game - Mathematik Lernspiel</title>
+    <title>Ultimate Math Game</title>
     <style>
         * {
             margin: 0;
@@ -43,12 +43,6 @@
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
             text-shadow: 0 0 10px rgba(76, 201, 240, 0.3);
-        }
-        
-        .subtitle {
-            font-size: 1.2rem;
-            color: #a5b4fc;
-            margin-bottom: 20px;
         }
         
         .screen {
@@ -107,18 +101,64 @@
             padding: 12px;
         }
         
+        .game-area {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 20px;
+            width: 100%;
+        }
+        
+        .score-board {
+            background: linear-gradient(135deg, #2d3047 0%, #1c1e2e 100%);
+            border: 3px solid #4cc9f0;
+            border-radius: 10px;
+            padding: 15px 30px;
+            text-align: center;
+            font-size: 2rem;
+            font-weight: bold;
+            color: white;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+            width: 200px;
+            z-index: 10;
+            margin-bottom: -10px;
+        }
+        
+        .wrestler-container {
+            position: relative;
+            width: 100%;
+            height: 280px;
+            background: rgba(0, 10, 20, 0.7);
+            border-radius: 15px;
+            overflow: hidden;
+            border: 3px solid #4361ee;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+        
+        .wrestler-image {
+            width: 220px;
+            height: 220px;
+            background-size: contain;
+            background-repeat: no-repeat;
+            background-position: center;
+            transition: transform 0.5s ease;
+        }
+        
         .game-info {
             display: flex;
             justify-content: space-between;
-            margin-bottom: 20px;
+            width: 100%;
             font-size: 1.2rem;
             background-color: rgba(0, 20, 40, 0.6);
             padding: 10px 15px;
             border-radius: 10px;
         }
         
-        .game-stats span {
-            margin-right: 15px;
+        .game-stats {
+            display: flex;
+            gap: 20px;
         }
         
         .timer {
@@ -127,115 +167,18 @@
             color: #f72585;
         }
         
-        .wrestler-container {
-            position: relative;
-            width: 100%;
-            height: 250px;
-            margin: 20px 0;
-            background: rgba(0, 10, 20, 0.5);
-            border-radius: 10px;
-            overflow: hidden;
-            border: 2px solid #4361ee;
-        }
-        
-        .wrestler-track {
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-        }
-        
-        .wrestler-position {
-            position: absolute;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            width: 150px;
-            height: 200px;
-            background-size: contain;
-            background-repeat: no-repeat;
-            background-position: center;
-            transition: all 0.5s ease;
-        }
-        
-        .position-marker {
-            position: absolute;
-            bottom: 10px;
-            left: 50%;
-            transform: translateX(-50%);
-            font-size: 1.5rem;
-            font-weight: bold;
-            color: #4cc9f0;
-            background: rgba(0, 0, 0, 0.7);
-            padding: 5px 15px;
-            border-radius: 20px;
-        }
-        
-        .score-display {
-            display: flex;
-            justify-content: center;
-            margin: 20px 0;
-        }
-        
-        .score-circle {
-            width: 50px;
-            height: 50px;
-            border-radius: 50%;
-            background-color: #1a1a2e;
-            border: 2px solid #4361ee;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            margin: 0 5px;
-            font-size: 1.5rem;
-            font-weight: bold;
-        }
-        
-        .score-circle.won {
-            background-color: #06d6a0;
-            color: #000;
-        }
-        
-        .score-circle.lost {
-            background-color: #ef476f;
-            color: #fff;
-        }
-        
-        .score-circle.active {
-            border-width: 4px;
-            border-color: #4cc9f0;
-        }
-        
-        .score-label {
-            text-align: center;
-            margin-bottom: 10px;
-            font-size: 1.3rem;
-        }
-        
-        .player-label {
-            color: #4cc9f0;
-        }
-        
-        .cpu-label {
-            color: #ef476f;
-        }
-        
         .question-container {
             background-color: rgba(0, 30, 60, 0.8);
-            padding: 25px;
+            padding: 30px;
             border-radius: 10px;
             text-align: center;
-            margin-bottom: 25px;
+            width: 100%;
             border: 2px solid #4361ee;
         }
         
         .question {
             font-size: 2.5rem;
-            margin-bottom: 20px;
+            margin-bottom: 25px;
             color: #fff;
         }
         
@@ -243,7 +186,6 @@
             display: grid;
             grid-template-columns: repeat(2, 1fr);
             gap: 15px;
-            margin-top: 20px;
         }
         
         .answer-button {
@@ -279,6 +221,28 @@
             background-color: rgba(239, 71, 111, 0.2);
             color: #ef476f;
             border: 1px solid #ef476f;
+        }
+        
+        .countdown-screen {
+            text-align: center;
+        }
+        
+        .countdown-number {
+            font-size: 8rem;
+            color: #4cc9f0;
+            margin: 40px 0;
+            text-shadow: 0 0 30px rgba(76, 201, 240, 0.5);
+            animation: pulse 1s infinite;
+        }
+        
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.1); }
+        }
+        
+        .countdown-text {
+            font-size: 2rem;
+            color: #a5b4fc;
         }
         
         .game-over {
@@ -330,10 +294,6 @@
             font-size: 1.2rem;
         }
         
-        .game-progress span {
-            margin: 0 10px;
-        }
-        
         footer {
             margin-top: 20px;
             color: #a5b4fc;
@@ -361,12 +321,16 @@
             }
             
             .wrestler-container {
-                height: 200px;
+                height: 220px;
             }
             
-            .wrestler-position {
-                width: 120px;
-                height: 160px;
+            .wrestler-image {
+                width: 180px;
+                height: 180px;
+            }
+            
+            .countdown-number {
+                font-size: 5rem;
             }
         }
     </style>
@@ -401,40 +365,41 @@
             <button id="back-to-grades" style="margin-top: 20px; width: 100%;">Zurück zur Klassenauswahl</button>
         </div>
         
+        <!-- Countdown Screen -->
+        <div id="countdown-screen" class="screen">
+            <div class="countdown-screen">
+                <h2 class="screen-title">Bereit für den Kampf?</h2>
+                <div class="countdown-number" id="countdown-number">3</div>
+                <div class="countdown-text">Das Spiel beginnt gleich!</div>
+            </div>
+        </div>
+        
         <!-- Game Screen -->
         <div id="game-screen" class="screen">
-            <div class="score-label">
-                <span class="player-label">SPIELER</span> vs <span class="cpu-label">CPU</span>
-            </div>
-            
-            <div class="score-display" id="score-display">
-                <!-- Score circles will be generated here -->
-            </div>
-            
-            <div class="wrestler-container">
-                <div class="wrestler-track">
-                    <div class="wrestler-position" id="wrestler-position"></div>
-                    <div class="position-marker" id="position-marker">Position: 6</div>
+            <div class="game-area">
+                <div class="score-board" id="score-board">0 : 0</div>
+                <div class="wrestler-container">
+                    <div class="wrestler-image" id="wrestler-image"></div>
                 </div>
-            </div>
-            
-            <div class="game-info">
-                <div class="game-stats">
-                    <span>Aktuelle Runde: <span id="current-round">1</span></span>
-                    <span>Richtig: <span id="correct-count">0</span></span>
-                    <span>Falsch: <span id="wrong-count">0</span></span>
+                
+                <div class="game-info">
+                    <div class="game-stats">
+                        <span>Aktuelle Runde: <span id="current-round">1</span></span>
+                        <span>Richtig: <span id="correct-count">0</span></span>
+                        <span>Falsch: <span id="wrong-count">0</span></span>
+                    </div>
+                    <div class="timer" id="timer-display">15</div>
                 </div>
-                <div class="timer" id="timer-display">15</div>
-            </div>
-            
-            <div class="question-container">
-                <div class="question" id="question">5 + 7 = ?</div>
-                <div class="answer-buttons" id="answer-buttons">
-                    <!-- Answer buttons will be generated here -->
+                
+                <div class="question-container">
+                    <div class="question" id="question">5 + 7 = ?</div>
+                    <div class="answer-buttons" id="answer-buttons">
+                        <!-- Answer buttons will be generated here -->
+                    </div>
                 </div>
+                
+                <div class="result-message" id="result-message"></div>
             </div>
-            
-            <div class="result-message" id="result-message"></div>
         </div>
         
         <!-- Game Over Screen -->
@@ -443,9 +408,7 @@
                 <h2 class="screen-title">Spiel beendet!</h2>
                 
                 <div class="wrestler-container" style="height: 200px;">
-                    <div class="wrestler-track">
-                        <div class="wrestler-position" id="final-wrestler"></div>
-                    </div>
+                    <div class="wrestler-image" id="final-wrestler"></div>
                 </div>
                 
                 <div class="final-result" id="final-result"></div>
@@ -497,11 +460,10 @@
             currentScreen: 'start',
             grade: null,
             timeMode: null,
-            roundWins: 0,       // Spieler-Rundengewinne
-            roundLosses: 0,     // CPU-Rundengewinne
-            currentRound: 1,    // Aktuelle Runde (bis 7 maximal)
-            position: 6,        // Wrestler-Position (1-11)
-            scoreHistory: [],   // Spielverlauf z.B. ["1:0", "1:1", "2:1"]
+            playerWins: 0,
+            cpuWins: 0,
+            currentRound: 1,
+            position: 6,
             correctAnswers: 0,
             wrongAnswers: 0,
             timer: null,
@@ -510,27 +472,43 @@
             trainingQuestions: 30,
             currentTrainingQuestion: 1,
             currentQuestionData: null,
+            audioElements: {},
             isPlayingSound: false,
-            gameHistory: []     // Speichert jede Frage mit Ergebnis
+            gameHistory: []
         };
 
-        // Sound Manager
-        const soundManager = {
-            audioContext: null,
-            sounds: {},
-            isInitialized: false,
+        // Initialize audio elements
+        function initAudio() {
+            const soundFiles = [
+                'start', 'correct', 'error', 
+                'roundwon', 'roundlost', 
+                'gamewon', 'gamelost',
+                'almostwon', 'almostlost'
+            ];
             
-            init: function() {
-                if (!this.isInitialized) {
-                    this.audioContext = new (window.AudioContext || window.webkitAudioContext)();
-                    this.isInitialized = true;
-                }
-            },
-            
-            playSound: function(type) {
-                this.init();
-                
-                // Simuliere das Laden und Abspielen von Sounddateien
+            soundFiles.forEach(sound => {
+                gameState.audioElements[sound] = new Audio(`audio/${sound}.wav`);
+            });
+        }
+
+        // Play sound function
+        function playSound(soundName) {
+            if (gameState.audioElements[soundName]) {
+                const audio = gameState.audioElements[soundName].cloneNode();
+                audio.play().catch(e => {
+                    console.log("Audio playback failed:", e);
+                    // Fallback to beep sound if file not found
+                    playFallbackSound(soundName);
+                });
+            } else {
+                playFallbackSound(soundName);
+            }
+        }
+
+        // Fallback sound using Web Audio API
+        function playFallbackSound(type) {
+            try {
+                const audioContext = new (window.AudioContext || window.webkitAudioContext)();
                 const sounds = {
                     'start': { freq: [523.25], duration: 1.0 },
                     'correct': { freq: [659.25], duration: 0.5 },
@@ -544,41 +522,36 @@
                 };
                 
                 if (sounds[type]) {
-                    gameState.isPlayingSound = true;
-                    this.playMelody(sounds[type].freq, sounds[type].duration);
-                    
-                    // Sound-Ende simulieren (in echt warten wir auf Audio-Ende)
-                    setTimeout(() => {
-                        gameState.isPlayingSound = false;
-                    }, sounds[type].duration * 1000 + 200);
+                    playMelody(audioContext, sounds[type].freq, sounds[type].duration);
                 }
-            },
-            
-            playMelody: function(frequencies, noteDuration) {
-                let time = this.audioContext.currentTime;
-                
-                frequencies.forEach((freq, index) => {
-                    const oscillator = this.audioContext.createOscillator();
-                    const gainNode = this.audioContext.createGain();
-                    
-                    oscillator.connect(gainNode);
-                    gainNode.connect(this.audioContext.destination);
-                    
-                    oscillator.frequency.setValueAtTime(freq, time);
-                    gainNode.gain.setValueAtTime(0.3, time);
-                    gainNode.gain.exponentialRampToValueAtTime(0.01, time + noteDuration);
-                    
-                    oscillator.start(time);
-                    oscillator.stop(time + noteDuration);
-                    
-                    time += noteDuration + 0.05;
-                });
+            } catch (e) {
+                console.log("Audio context not supported");
             }
-        };
+        }
+
+        function playMelody(audioContext, frequencies, noteDuration) {
+            let time = audioContext.currentTime;
+            
+            frequencies.forEach((freq, index) => {
+                const oscillator = audioContext.createOscillator();
+                const gainNode = audioContext.createGain();
+                
+                oscillator.connect(gainNode);
+                gainNode.connect(audioContext.destination);
+                
+                oscillator.frequency.setValueAtTime(freq, time);
+                gainNode.gain.setValueAtTime(0.3, time);
+                gainNode.gain.exponentialRampToValueAtTime(0.01, time + noteDuration);
+                
+                oscillator.start(time);
+                oscillator.stop(time + noteDuration);
+                
+                time += noteDuration + 0.05;
+            });
+        }
 
         // Question generators for each grade level
         const questionGenerators = {
-            // Grade 1: Addition/Subtraction up to 20
             grade1: function() {
                 const operations = ['+', '-'];
                 const operation = operations[Math.floor(Math.random() * operations.length)];
@@ -586,19 +559,18 @@
                 let a, b, result;
                 
                 if (operation === '+') {
-                    a = Math.floor(Math.random() * 11) + 5; // 5-15
-                    b = Math.floor(Math.random() * 11) + 5; // 5-15
+                    a = Math.floor(Math.random() * 11) + 5;
+                    b = Math.floor(Math.random() * 11) + 5;
                     result = a + b;
                     
-                    // Ensure result is <= 20
                     while (result > 20) {
                         a = Math.floor(Math.random() * 11) + 5;
                         b = Math.floor(Math.random() * 11) + 5;
                         result = a + b;
                     }
                 } else {
-                    a = Math.floor(Math.random() * 16) + 5; // 5-20
-                    b = Math.floor(Math.random() * a) + 1; // 1 to a-1
+                    a = Math.floor(Math.random() * 16) + 5;
+                    b = Math.floor(Math.random() * a) + 1;
                     result = a - b;
                 }
                 
@@ -611,7 +583,6 @@
                 };
             },
             
-            // Grade 2: Addition/Subtraction up to 100
             grade2: function() {
                 const operations = ['+', '-'];
                 const operation = operations[Math.floor(Math.random() * operations.length)];
@@ -619,19 +590,18 @@
                 let a, b, result;
                 
                 if (operation === '+') {
-                    a = Math.floor(Math.random() * 51) + 25; // 25-75
-                    b = Math.floor(Math.random() * 51) + 25; // 25-75
+                    a = Math.floor(Math.random() * 51) + 25;
+                    b = Math.floor(Math.random() * 51) + 25;
                     result = a + b;
                     
-                    // Ensure result is <= 100
                     while (result > 100) {
                         a = Math.floor(Math.random() * 51) + 25;
                         b = Math.floor(Math.random() * 51) + 25;
                         result = a + b;
                     }
                 } else {
-                    a = Math.floor(Math.random() * 71) + 30; // 30-100
-                    b = Math.floor(Math.random() * (a - 10)) + 10; // 10 to a-1
+                    a = Math.floor(Math.random() * 71) + 30;
+                    b = Math.floor(Math.random() * (a - 10)) + 10;
                     result = a - b;
                 }
                 
@@ -644,7 +614,6 @@
                 };
             },
             
-            // Grade 3: Addition/Subtraction up to 1000, multiplication/division up to 10
             grade3: function() {
                 const operations = ['+', '-', '×', '÷'];
                 const operation = operations[Math.floor(Math.random() * operations.length)];
@@ -652,28 +621,27 @@
                 let a, b, result;
                 
                 if (operation === '+') {
-                    a = Math.floor(Math.random() * 501) + 250; // 250-750
-                    b = Math.floor(Math.random() * 501) + 250; // 250-750
+                    a = Math.floor(Math.random() * 501) + 250;
+                    b = Math.floor(Math.random() * 501) + 250;
                     result = a + b;
                     
-                    // Ensure result is <= 1000
                     while (result > 1000) {
                         a = Math.floor(Math.random() * 501) + 250;
                         b = Math.floor(Math.random() * 501) + 250;
                         result = a + b;
                     }
                 } else if (operation === '-') {
-                    a = Math.floor(Math.random() * 701) + 300; // 300-1000
-                    b = Math.floor(Math.random() * (a - 100)) + 100; // 100 to a-1
+                    a = Math.floor(Math.random() * 701) + 300;
+                    b = Math.floor(Math.random() * (a - 100)) + 100;
                     result = a - b;
                 } else if (operation === '×') {
-                    a = Math.floor(Math.random() * 10) + 1; // 1-10
-                    b = Math.floor(Math.random() * 10) + 1; // 1-10
+                    a = Math.floor(Math.random() * 10) + 1;
+                    b = Math.floor(Math.random() * 10) + 1;
                     result = a * b;
-                } else { // division
-                    b = Math.floor(Math.random() * 9) + 2; // 2-10
-                    result = Math.floor(Math.random() * 9) + 2; // 2-10
-                    a = b * result; // Ensure it's a clean division
+                } else {
+                    b = Math.floor(Math.random() * 9) + 2;
+                    result = Math.floor(Math.random() * 9) + 2;
+                    a = b * result;
                 }
                 
                 return {
@@ -685,7 +653,6 @@
                 };
             },
             
-            // Grade 4: Addition/Subtraction up to 10000, multiplication up to 20, multiples of 10
             grade4: function() {
                 const operations = ['+', '-', '×', '÷'];
                 const operation = operations[Math.floor(Math.random() * operations.length)];
@@ -693,52 +660,45 @@
                 let a, b, result;
                 
                 if (operation === '+') {
-                    a = Math.floor(Math.random() * 5001) + 2500; // 2500-7500
-                    b = Math.floor(Math.random() * 5001) + 2500; // 2500-7500
+                    a = Math.floor(Math.random() * 5001) + 2500;
+                    b = Math.floor(Math.random() * 5001) + 2500;
                     result = a + b;
                     
-                    // Ensure result is <= 10000
                     while (result > 10000) {
                         a = Math.floor(Math.random() * 5001) + 2500;
                         b = Math.floor(Math.random() * 5001) + 2500;
                         result = a + b;
                     }
                 } else if (operation === '-') {
-                    a = Math.floor(Math.random() * 7001) + 3000; // 3000-10000
-                    b = Math.floor(Math.random() * (a - 1000)) + 1000; // 1000 to a-1
+                    a = Math.floor(Math.random() * 7001) + 3000;
+                    b = Math.floor(Math.random() * (a - 1000)) + 1000;
                     result = a - b;
                 } else if (operation === '×') {
-                    // 50% chance for normal multiplication, 50% for multiples of 10
                     if (Math.random() > 0.5) {
-                        a = Math.floor(Math.random() * 20) + 1; // 1-20
-                        b = Math.floor(Math.random() * 20) + 1; // 1-20
+                        a = Math.floor(Math.random() * 20) + 1;
+                        b = Math.floor(Math.random() * 20) + 1;
                         result = a * b;
                     } else {
-                        // Multiples of 10
-                        a = (Math.floor(Math.random() * 10) + 1) * 10; // 10, 20, ..., 100
-                        b = Math.floor(Math.random() * 10) + 1; // 1-10
+                        a = (Math.floor(Math.random() * 10) + 1) * 10;
+                        b = Math.floor(Math.random() * 10) + 1;
                         result = a * b;
                         
-                        // Ensure result <= 1000
                         while (result > 1000) {
                             a = (Math.floor(Math.random() * 10) + 1) * 10;
                             b = Math.floor(Math.random() * 10) + 1;
                             result = a * b;
                         }
                     }
-                } else { // division
-                    // 50% chance for normal division, 50% for multiples of 10 division
+                } else {
                     if (Math.random() > 0.5) {
-                        b = Math.floor(Math.random() * 19) + 2; // 2-20
-                        result = Math.floor(Math.random() * 19) + 2; // 2-20
+                        b = Math.floor(Math.random() * 19) + 2;
+                        result = Math.floor(Math.random() * 19) + 2;
                         a = b * result;
                     } else {
-                        // Division with multiples of 10
-                        result = Math.floor(Math.random() * 9) + 2; // 2-10
-                        b = (Math.floor(Math.random() * 9) + 2) * 10; // 20, 30, ..., 100
+                        result = Math.floor(Math.random() * 9) + 2;
+                        b = (Math.floor(Math.random() * 9) + 2) * 10;
                         a = b * result;
                         
-                        // Ensure a <= 1000
                         while (a > 1000) {
                             result = Math.floor(Math.random() * 9) + 2;
                             b = (Math.floor(Math.random() * 9) + 2) * 10;
@@ -759,6 +719,8 @@
 
         // Initialize the game
         function initGame() {
+            initAudio();
+            
             // Set up event listeners
             document.getElementById('grade1').addEventListener('click', () => selectGrade(1));
             document.getElementById('grade2').addEventListener('click', () => selectGrade(2));
@@ -794,7 +756,6 @@
         function selectTimeMode(mode) {
             gameState.timeMode = mode;
             
-            // Set time based on mode
             if (mode === 'hard') {
                 gameState.timeLeft = 5;
             } else if (mode === 'medium') {
@@ -805,13 +766,28 @@
                 gameState.isTraining = true;
             }
             
-            // Play start sound and wait for it to finish
-            soundManager.playSound('start');
+            // Start countdown
+            startCountdown();
+        }
+
+        // Start countdown before game
+        function startCountdown() {
+            showScreen('countdown-screen');
+            playSound('start');
             
-            // Start game after sound
-            setTimeout(() => {
-                startGame();
-            }, 1200); // Warten bis Sound fertig ist
+            let countdown = 3;
+            const countdownElement = document.getElementById('countdown-number');
+            
+            const countdownInterval = setInterval(() => {
+                countdownElement.textContent = countdown;
+                
+                if (countdown === 0) {
+                    clearInterval(countdownInterval);
+                    startGame();
+                }
+                
+                countdown--;
+            }, 1000);
         }
 
         // Go back to grade selection
@@ -822,11 +798,10 @@
         // Start the game
         function startGame() {
             // Reset game state
-            gameState.roundWins = 0;
-            gameState.roundLosses = 0;
+            gameState.playerWins = 0;
+            gameState.cpuWins = 0;
             gameState.currentRound = 1;
             gameState.position = 6;
-            gameState.scoreHistory = [];
             gameState.correctAnswers = 0;
             gameState.wrongAnswers = 0;
             gameState.currentTrainingQuestion = 1;
@@ -835,8 +810,8 @@
             // Show game screen
             showScreen('game-screen');
             
-            // Initialize score display
-            initScoreDisplay();
+            // Update score board
+            updateScoreBoard();
             
             // Update wrestler position
             updateWrestlerPosition();
@@ -852,99 +827,24 @@
             }
         }
 
-        // Initialize score display (circles for rounds)
-        function initScoreDisplay() {
-            const scoreDisplay = document.getElementById('score-display');
-            scoreDisplay.innerHTML = '';
-            
-            for (let i = 0; i < 7; i++) {
-                const circle = document.createElement('div');
-                circle.className = 'score-circle';
-                if (i === 0) circle.classList.add('active');
-                circle.textContent = i + 1;
-                scoreDisplay.appendChild(circle);
-            }
-        }
-
-        // Update score display
-        function updateScoreDisplay() {
-            const circles = document.querySelectorAll('.score-circle');
-            
-            circles.forEach((circle, index) => {
-                circle.classList.remove('won', 'lost', 'active');
-                
-                if (index < gameState.roundWins) {
-                    circle.classList.add('won');
-                } else if (index < gameState.roundWins + gameState.roundLosses) {
-                    circle.classList.add('lost');
-                }
-                
-                // Highlight current round
-                if (index === gameState.currentRound - 1) {
-                    circle.classList.add('active');
-                }
-            });
+        // Update score board
+        function updateScoreBoard() {
+            document.getElementById('score-board').textContent = `${gameState.playerWins} : ${gameState.cpuWins}`;
         }
 
         // Update wrestler position and image
         function updateWrestlerPosition() {
-            const wrestlerPosition = document.getElementById('wrestler-position');
-            const positionMarker = document.getElementById('position-marker');
+            const wrestlerImage = document.getElementById('wrestler-image');
             
-            // Calculate horizontal position (0% = links, 100% = rechts)
-            // Position 6 = Mitte (50%), Position 1 = 0%, Position 11 = 100%
-            const percentage = ((gameState.position - 1) / 10) * 100;
+            // Set the correct image based on position
+            wrestlerImage.style.backgroundImage = `url('wrestlers/ringer${gameState.position}.png')`;
             
-            // Update position
-            wrestlerPosition.style.left = `${percentage}%`;
-            positionMarker.textContent = `Position: ${gameState.position}`;
-            
-            // Update background image (simuliert)
-            // In der echten Implementierung: wrestlerPosition.style.backgroundImage = `url('wrestlers/ringer${gameState.position}.png')`;
-            
-            // Visuelle Darstellung für Demo
-            let backgroundColor, borderColor, emoji;
-            
-            if (gameState.position === 1) {
-                backgroundColor = 'rgba(239, 71, 111, 0.9)';
-                borderColor = '#d90429';
-                emoji = '😫';
-            } else if (gameState.position === 2) {
-                backgroundColor = 'rgba(239, 71, 111, 0.7)';
-                borderColor = '#ef476f';
-                emoji = '😟';
-                soundManager.playSound('almostlost');
-            } else if (gameState.position <= 5) {
-                backgroundColor = 'rgba(239, 71, 111, 0.5)';
-                borderColor = '#f72585';
-                emoji = '😐';
-            } else if (gameState.position === 6) {
-                backgroundColor = 'rgba(67, 97, 238, 0.5)';
-                borderColor = '#4361ee';
-                emoji = '🤼';
-            } else if (gameState.position === 7) {
-                backgroundColor = 'rgba(6, 214, 160, 0.5)';
-                borderColor = '#06d6a0';
-                emoji = '😐';
+            // Add visual effect based on position
+            if (gameState.position === 2) {
+                playSound('almostlost');
             } else if (gameState.position === 10) {
-                backgroundColor = 'rgba(6, 214, 160, 0.7)';
-                borderColor = '#04966a';
-                emoji = '😊';
-                soundManager.playSound('almostwon');
-            } else if (gameState.position === 11) {
-                backgroundColor = 'rgba(6, 214, 160, 0.9)';
-                borderColor = '#04966a';
-                emoji = '😄';
-            } else {
-                backgroundColor = 'rgba(6, 214, 160, 0.5)';
-                borderColor = '#06d6a0';
-                emoji = '😐';
+                playSound('almostwon');
             }
-            
-            wrestlerPosition.style.backgroundColor = backgroundColor;
-            wrestlerPosition.style.border = `3px solid ${borderColor}`;
-            wrestlerPosition.style.borderRadius = '10px';
-            wrestlerPosition.innerHTML = `<div style="display: flex; align-items: center; justify-content: center; height: 100%; font-size: 3rem;">${emoji}<br><div style="font-size: 0.8rem; margin-top: 10px;">ringer${gameState.position}.png</div></div>`;
             
             // Check for round win/loss
             checkRoundResult();
@@ -953,17 +853,27 @@
         // Check if round is won or lost
         function checkRoundResult() {
             if (gameState.position === 1) {
-                // CPU gewinnt Runde
-                gameState.roundLosses++;
-                gameState.scoreHistory.push(`${gameState.roundWins}:${gameState.roundLosses}`);
-                soundManager.playSound('roundlost');
+                // CPU wins round
+                gameState.cpuWins++;
+                playSound('roundlost');
                 endRound(false);
             } else if (gameState.position === 11) {
-                // Spieler gewinnt Runde
-                gameState.roundWins++;
-                gameState.scoreHistory.push(`${gameState.roundWins}:${gameState.roundLosses}`);
-                soundManager.playSound('roundwon');
+                // Player wins round
+                gameState.playerWins++;
+                playSound('roundwon');
                 endRound(true);
+            } else {
+                // Continue with next question
+                setTimeout(() => {
+                    generateQuestion();
+                    
+                    // Restart timer if not in training mode
+                    if (!gameState.isTraining) {
+                        gameState.timeLeft = getTimeForMode();
+                        document.getElementById('timer-display').textContent = gameState.timeLeft;
+                        startTimer();
+                    }
+                }, 1500);
             }
         }
 
@@ -979,35 +889,24 @@
             resultMessage.className = playerWon ? 'result-message correct-message' : 'result-message wrong-message';
             resultMessage.style.display = 'block';
             
-            // Disable answer buttons
-            const buttons = document.querySelectorAll('.answer-button');
-            buttons.forEach(button => {
-                button.disabled = true;
-            });
+            // Update score board
+            updateScoreBoard();
             
-            // Update score display
-            updateScoreDisplay();
+            // Update round counter
+            gameState.currentRound++;
+            document.getElementById('current-round').textContent = gameState.currentRound;
             
             // Check if game is over
-            if (gameState.roundWins >= 4 || gameState.roundLosses >= 4 || gameState.currentRound >= 7) {
+            if (gameState.playerWins >= 4 || gameState.cpuWins >= 4) {
                 setTimeout(() => {
                     endGame();
                 }, 2000);
             } else {
-                // Next round
-                gameState.currentRound++;
-                gameState.position = 6; // Reset to middle
+                // Reset position for next round
+                gameState.position = 6;
                 
                 setTimeout(() => {
                     updateWrestlerPosition();
-                    generateQuestion();
-                    
-                    // Restart timer if not in training mode
-                    if (!gameState.isTraining) {
-                        gameState.timeLeft = getTimeForMode();
-                        document.getElementById('timer-display').textContent = gameState.timeLeft;
-                        startTimer();
-                    }
                 }, 2000);
             }
         }
@@ -1021,7 +920,6 @@
             
             // Display the question
             document.getElementById('question').textContent = questionData.question;
-            document.getElementById('current-round').textContent = gameState.currentRound;
             
             // Generate answer options (1 correct, 3 wrong)
             const answers = generateWrongAnswers(questionData.correctAnswer);
@@ -1135,7 +1033,7 @@
 
         // Handle correct answer
         function handleCorrectAnswer() {
-            soundManager.playSound('correct');
+            playSound('correct');
             
             // Update game state
             gameState.correctAnswers++;
@@ -1165,7 +1063,7 @@
 
         // Handle wrong answer
         function handleWrongAnswer() {
-            soundManager.playSound('error');
+            playSound('error');
             
             // Update game state
             gameState.wrongAnswers++;
@@ -1202,42 +1100,20 @@
             
             // Update final wrestler display
             const finalWrestler = document.getElementById('final-wrestler');
-            let finalBackgroundColor, finalBorderColor, finalEmoji, finalText;
-            
-            if (gameState.position <= 5) {
-                finalBackgroundColor = 'rgba(239, 71, 111, 0.9)';
-                finalBorderColor = '#d90429';
-                finalEmoji = '😫';
-                finalText = `ringer${gameState.position}.png<br>CPU gewinnt das Spiel!`;
-            } else if (gameState.position >= 7) {
-                finalBackgroundColor = 'rgba(6, 214, 160, 0.9)';
-                finalBorderColor = '#04966a';
-                finalEmoji = '😄';
-                finalText = `ringer${gameState.position}.png<br>Spieler gewinnt das Spiel!`;
-            } else {
-                finalBackgroundColor = 'rgba(67, 97, 238, 0.9)';
-                finalBorderColor = '#4361ee';
-                finalEmoji = '🤼';
-                finalText = `ringer6.png<br>Unentschieden!`;
-            }
-            
-            finalWrestler.style.backgroundColor = finalBackgroundColor;
-            finalWrestler.style.border = `3px solid ${finalBorderColor}`;
-            finalWrestler.style.borderRadius = '10px';
-            finalWrestler.innerHTML = `<div style="display: flex; align-items: center; justify-content: center; height: 100%; font-size: 3rem;">${finalEmoji}<br><div style="font-size: 0.8rem; margin-top: 10px;">${finalText}</div></div>`;
+            finalWrestler.style.backgroundImage = `url('wrestlers/ringer${gameState.position}.png')`;
             
             // Set final result
             const finalResult = document.getElementById('final-result');
-            if (gameState.roundWins > gameState.roundLosses) {
-                finalResult.textContent = `HERZLICHEN GLÜCKWUNSCH! Du hast das Spiel ${gameState.roundWins}:${gameState.roundLosses} gewonnen!`;
+            if (gameState.playerWins > gameState.cpuWins) {
+                finalResult.textContent = `HERZLICHEN GLÜCKWUNSCH! Du hast das Spiel ${gameState.playerWins}:${gameState.cpuWins} gewonnen!`;
                 finalResult.className = 'final-result win';
-                soundManager.playSound('gamewon');
-            } else if (gameState.roundLosses > gameState.roundWins) {
-                finalResult.textContent = `LEIDER VERLOREN! CPU gewinnt ${gameState.roundLosses}:${gameState.roundWins}`;
+                playSound('gamewon');
+            } else if (gameState.cpuWins > gameState.playerWins) {
+                finalResult.textContent = `LEIDER VERLOREN! CPU gewinnt ${gameState.cpuWins}:${gameState.playerWins}`;
                 finalResult.className = 'final-result lose';
-                soundManager.playSound('gamelost');
+                playSound('gamelost');
             } else {
-                finalResult.textContent = `UNENTSCHIEDEN! ${gameState.roundWins}:${gameState.roundLosses}`;
+                finalResult.textContent = `UNENTSCHIEDEN! ${gameState.playerWins}:${gameState.cpuWins}`;
                 finalResult.className = 'final-result';
             }
             
@@ -1264,7 +1140,7 @@
             
             // Update game progress
             const gameProgress = document.getElementById('game-progress');
-            gameProgress.innerHTML = `<strong>Spielverlauf:</strong> ${gameState.scoreHistory.join(' → ')}`;
+            gameProgress.innerHTML = `<strong>Spielverlauf:</strong> Runden: ${gameState.playerWins} gewonnen, ${gameState.cpuWins} verloren`;
             
             // Show game over screen
             showScreen('game-over-screen');
